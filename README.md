@@ -17,7 +17,33 @@ It's easier to ship a daemon that runs 24/7 to ingest, enrich, and consolidate t
 
 > **~30 minutes to a fully working brain.** Database ready in 2 seconds (PGLite, no server). You just answer questions about API keys.
 
-> **LLMs:** fetch [`llms.txt`](llms.txt) for the documentation map, or [`llms-full.txt`](llms-full.txt) for the same map with core docs inlined in one fetch. **Agents:** start with [`AGENTS.md`](AGENTS.md) (or [`CLAUDE.md`](CLAUDE.md) if you're Claude Code).
+## Start here
+
+- **Current release.** Read [`VERSION`](VERSION) for the exact version and
+  [`CHANGELOG.md`](CHANGELOG.md) for what changed. Upgrade instructions live in
+  [`docs/INSTALL.md`](docs/INSTALL.md). Coding agents should follow
+  [`INSTALL_FOR_AGENTS.md#upgrade`](INSTALL_FOR_AGENTS.md#upgrade).
+- **Install or operate GBrain.** Start with
+  [`docs/INSTALL.md`](docs/INSTALL.md). It covers local PGLite, Postgres or
+  Supabase, thin clients, MCP, and verification.
+- **Install with a coding agent.** Follow
+  [`INSTALL_FOR_AGENTS.md`](INSTALL_FOR_AGENTS.md). Non-Claude agents start with
+  [`AGENTS.md`](AGENTS.md). Claude Code starts with [`CLAUDE.md`](CLAUDE.md).
+- **Run a shared or production brain.** Choose an
+  [operating model](docs/architecture/topologies.md#operating-model-decision-tree)
+  and a
+  [deployment topology](docs/architecture/topologies.md#deployment-topology-decision-tree),
+  then continue with [`docs/mcp/DEPLOY.md`](docs/mcp/DEPLOY.md),
+  [`SECURITY.md`](SECURITY.md), and
+  [`docs/GBRAIN_VERIFY.md`](docs/GBRAIN_VERIFY.md).
+- **Choose a working mode.** Use the
+  [mode selection guide](docs/guides/mode-selection.md) after installation. It
+  distinguishes direct search, synthesis, background maintenance, retrieval
+  reflex, volunteered context, and watch mode.
+- **Load the docs into an LLM.** Fetch [`llms.txt`](llms.txt) for the curated
+  map or [`llms-full.txt`](llms-full.txt) for the map with core docs inlined.
+  The build reads [`scripts/llms-config.ts`](scripts/llms-config.ts). Forks
+  should set `LLMS_REPO_BASE` before running `bun run build:llms`.
 
 ## What this looks like
 
