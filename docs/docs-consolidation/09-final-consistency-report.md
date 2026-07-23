@@ -17,7 +17,7 @@ import, sync, or Docker lifecycle command was run.
 - `docs/docs-consolidation/03-issue-breakdown.md`
 - Current branch diff against `upstream/master`.
 - Fresh `git fetch upstream --prune` on 2026-07-23, confirming
-  `upstream/master` at `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
+  `upstream/master` at `0bd752b3f72eae72728f9091e12b3b7bfa4f5cbd`
   and version `0.42.64.0`.
 - Source review of all six post-release reverts on current `master`.
 - Landed docs and generated maps listed below.
@@ -32,7 +32,8 @@ found concrete install and auth issues that needed patching before PR handoff:
 
 | Finding | Resolution | Proof |
 | --- | --- | --- |
-| Six source reverts landed on `master` after the latest `0.42.64.0` changelog entry. | Rebased onto `a356f64e`, reviewed every revert, and treated current source as authority where it differs from the release ledger. | `git log` and source diff for `a356f64e`, `a1dadebd`, `c43ed81c`, `1d0df706`, `8078c46a`, and `e20a6a53` |
+| Six source reverts landed on `master` after the latest `0.42.64.0` changelog entry. | Reviewed every revert and treated current source as authority where it differs from the release ledger. | `git log` and source diff for `a356f64e`, `a1dadebd`, `c43ed81c`, `1d0df706`, `8078c46a`, and `e20a6a53` |
+| Seven additional source changes landed after those reverts without a new release entry. | Rebased onto `0bd752b3`, reviewed all seven changes, and updated provider, install, pre-commit, cycle, worker, and lens-pack guidance where operator-visible behavior changed. | Source diff for `0bd752b3`, `6e4c2435`, `1a9ab6a9`, `7c06af28`, `5ac81b0d`, `c0cb6c53`, and `d67be8b5` |
 | The autopilot install path assumed the generated wrapper made Bun available to scheduled processes. | Added the non-interactive PATH prerequisite to the human path, agent protocol, and architecture index. | Source read of `writeWrapperScript()` in `src/commands/autopilot.ts` |
 | Lens-pack docs promised that one dream schedule automatically carried newly extracted atoms into concept synthesis. | Documented that current extraction does not assign `concepts` labels and that zero-yield pages can remain in the atom backlog. | Source reads of `src/core/cycle/extract-atoms.ts`, `synthesize-concepts.ts`, and `extract-atoms-drain.ts` |
 | Human remediation-plan output can contradict its own unreachable-target result. | Directed humans and agents to the stable JSON fields and blocked prerequisites. | Source read of `runRemediationPlan()` in `src/commands/doctor.ts` |
@@ -57,8 +58,8 @@ found concrete install and auth issues that needed patching before PR handoff:
 | The ChatGPT guide said exactly four operations were `localOnly`. | Replaced the brittle count with examples and named `src/core/operations.ts` as authority. | CodeGraph trace to the current operation registry |
 
 The current `understand-anything` pass scanned and structurally extracted all
-2,674 included files, regenerated the import and call graph, rebuilt the layers
-and tour, and produced a 2,674-file fingerprint baseline. Validation found zero
+2,678 included files, regenerated the import and call graph, rebuilt the layers
+and tour, and produced a 2,678-file fingerprint baseline. Validation found zero
 duplicate IDs, missing file paths, dangling edges, or broken layer/tour
 references. The stale semantic graph from an older commit was not retained.
 This is structural static analysis, not a fresh file-by-file LLM semantic
@@ -149,14 +150,14 @@ No runtime behavior change was introduced by this branch.
 | CodeGraph-first exploration before raw search on final pass | pass |
 | GitHub issue #1 and #14 bodies read | pass |
 | GitHub issue #1 comments read, including operator feedback | pass |
-| `bun run build:llms` after generator/content changes | pass: `llms.txt` 8,589 bytes; `llms-full.txt` 300,948 bytes |
+| `bun run build:llms` after generator/content changes | pass: `llms.txt` 8,624 bytes; `llms-full.txt` 306,535 bytes |
 | `git diff --check` / staged whitespace checks on implementation slices | pass |
 | Added local Markdown links and anchors | pass: 175 checked, 0 broken |
 | Targeted stale-count search for #13 phrases | pass |
 | Secret-pattern scan over staged #13 diff | pass |
 | `bun test test/build-llms.test.ts` | pass with a temporary Bun config that disables unrelated repository-wide test preloads; no dependency install was performed |
-| Fresh CodeGraph index after the final source review | pass: index up to date at 2,136 files, 23,539 nodes, and 120,474 edges |
-| Fresh repository-wide `understand-anything` pass | pass: 2,674 files, 8,644 nodes, 17,288 edges, 9 layers, 6 tour steps, 0 validation issues, and a 2,674-file fingerprint baseline |
+| Fresh CodeGraph index after the final source review | pass: index up to date at 2,140 files, 23,601 nodes, and 120,674 edges |
+| Fresh repository-wide `understand-anything` pass | pass: 2,678 files, 8,664 nodes, 15,683 edges, 9 layers, 6 tour steps, 0 validation issues, and a 2,678-file fingerprint baseline |
 | Final `openclaw-autoreview` pass | pending final content freeze |
 
 ## Proof limits

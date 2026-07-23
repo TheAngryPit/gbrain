@@ -5,7 +5,7 @@ Status: upstream documentation consolidation baseline
 ## Git
 
 - Current branch: codex/docs-consolidate-operational-v2
-- Pinned upstream commit: a356f64e4f36c6f3dd9251c7127e557fc161c7cd
+- Pinned upstream commit: 0bd752b3f72eae72728f9091e12b3b7bfa4f5cbd
 - Current upstream version: 0.42.64.0
 
 ## Current release baseline
@@ -15,12 +15,22 @@ inventory pass. The changelog is the first release-evolution ledger for
 documentation drift checks. Current source is authoritative when `master`
 changes after the latest release entry.
 
-The pinned commit contains six reverts after the `0.42.64.0` changelog entry.
-They remove the autopilot Bun PATH fix, `reference/` wikilink extraction,
-automatic concept labels from `extract_atoms`, zero-yield atom tombstones, the
-doctor human-output fix for unreachable targets, and the OpenRouter reranker
-recipe touchpoint. This docs pass reviewed each revert against current
-operational claims.
+The pinned commit contains 13 source commits after the `0.42.64.0` changelog
+entry. Six are reverts: the autopilot Bun PATH fix, `reference/` wikilink
+extraction, automatic concept labels from `extract_atoms`, zero-yield atom
+tombstones, the doctor human-output fix for unreachable targets, and the
+OpenRouter reranker recipe touchpoint. Seven later commits add or correct:
+
+- metered and configurable `extract_atoms` model spend;
+- source-scoped orphan candidates during normal cycles, with an explicit
+  global maintenance override;
+- single-file frontmatter slug validation relative to the brain repo;
+- Matryoshka dimension lookup for provider-prefixed OpenAI-compatible models;
+- a chat-only `claude-cli` OAuth recipe with subagent support;
+- idempotent resubmission after `dead` or `cancelled` jobs;
+- rejection of unknown `gbrain init` flags before migration work begins.
+
+This docs pass reviewed all 13 commits against current operational claims.
 
 Latest release entries reviewed:
 

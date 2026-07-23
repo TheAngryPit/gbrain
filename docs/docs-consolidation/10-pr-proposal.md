@@ -82,8 +82,8 @@ The branch:
 - `git diff --check`
 - current source-contract review through CodeGraph
 - fresh upstream check confirming version `0.42.64.0`
-- fresh repository-wide `understand-anything` structural scan: 2,674 files,
-  8,644 nodes, 17,288 edges, 9 layers, 6 tour steps, and 0 validation issues
+- fresh repository-wide `understand-anything` structural scan: 2,678 files,
+  8,664 nodes, 15,683 edges, 9 layers, 6 tour steps, and 0 validation issues
 - final `openclaw-autoreview` result will be copied from
   `docs/docs-consolidation/09-final-consistency-report.md` after it runs
 

@@ -8,7 +8,7 @@ migration, import, sync, or Docker lifecycle command was run.
 
 Baseline:
 
-- Current upstream commit: `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
+- Current upstream commit: `0bd752b3f72eae72728f9091e12b3b7bfa4f5cbd`
 - Current upstream version: `0.42.64.0`
 - Primary release window: `0.42.64.0` through `0.42.55.0`
 - Supporting release window for drift classification: `0.42.54.0` through
@@ -18,9 +18,9 @@ Baseline:
 
 For the rest of this docs-only PR, treat `CHANGELOG.md` as the release
 evolution ledger and current source as the operational authority. The pinned
-`master` contains six reverts after the latest `0.42.64.0` entry, so the
-changelog alone cannot establish current behavior. A later release does not
-automatically make a doc stale.
+`master` contains six reverts and seven later source changes after the latest
+`0.42.64.0` entry, so the changelog alone cannot establish current behavior. A
+later release does not automatically make a doc stale.
 Classify it against the current capability it claims to document:
 
 - `current`: accurately represents the current capability for its intended
@@ -44,6 +44,12 @@ input. Do not count this ledger as proof that the public docs are fixed.
 | `master` after `0.42.64.0` | `extract_atoms` no longer assigns concept labels, and zero-yield pages are not tombstoned. | Lens-pack docs must not promise automatic atom-to-concept flow or claim that a zero-yield drain cleared the backlog. | `current` after this pass in `docs/architecture/lens-packs.md` and `KEY_FILES.md`. | Final review |
 | `master` after `0.42.64.0` | Human remediation-plan output can claim the brain reached an unreachable target when the plan is empty. The JSON envelope remains explicit. | Operator and agent docs must use `target_unreachable`, `max_reachable_score`, and `blocked` as authority. | `current` after this pass in `docs/INSTALL.md`, `INSTALL_FOR_AGENTS.md`, and `KEY_FILES.md`. | Final review |
 | `master` after `0.42.64.0` | `reference/` wikilinks and the OpenRouter reranker recipe touchpoint were removed. | Do not advertise either reverted path as current capability. | `current`: no public operational claim required removal in this branch. | Final review |
+| `master` after `0.42.64.0` | `extract_atoms` uses a configurable model, a configurable per-source budget, and records actual estimated spend and budget exhaustion. | Lens-pack and operator docs must name the defaults without presenting them as fixed. | `current` after this pass in `docs/architecture/lens-packs.md` and `KEY_FILES.md`. | Final review |
+| `master` after `0.42.64.0` | Normal source-resolved cycles scope orphan candidates to that source; the serialized global-maintenance lane explicitly runs the brain-wide pass. | Cycle/topology docs must distinguish source work from global maintenance. | `current` after this pass in `KEY_FILES.md`. | Final review |
+| `master` after `0.42.64.0` | Single-file frontmatter validation derives the slug from the nearest brain-repo root, and unknown `gbrain init` flags fail before migrations. | Install and pre-commit docs should explain both fail-early behaviors. | `current` after this pass in `docs/INSTALL.md`, `docs/integrations/pre-commit.md`, and `KEY_FILES.md`. | Final review |
+| `master` after `0.42.64.0` | Provider-prefixed OpenAI-compatible embedding IDs retain known Matryoshka dimension options. | Provider docs should not imply that a prefix disables dimension selection. | `current` after this pass in `docs/integrations/embedding-providers.md`. | Final review |
+| `master` after `0.42.64.0` | `claude-cli` provides chat and subagent calls through an authenticated local Claude CLI OAuth session; it does not provide embeddings. | Provider guidance must separate subscription-backed chat from embedding setup and API-key billing. | `current` after this pass in `docs/integrations/embedding-providers.md` and `KEY_FILES.md`. | Final review |
+| `master` after `0.42.64.0` | A `dead` or `cancelled` Minion job no longer permanently reserves its idempotency key; the audit row remains and a fresh job is inserted. | Worker docs should distinguish terminal retry from active/completed dedupe. | `current` after this pass in `docs/guides/minions-deployment.md` and `KEY_FILES.md`. | Final review |
 | `0.42.64.0` | Confidential OAuth clients can revoke tokens with client authentication; malformed, invalid, and mixed credentials fail closed. | MCP and shared-brain docs must teach revocation as part of the client lifecycle without weakening authentication. | `current` after this pass in `docs/INSTALL.md` and the MCP authority docs. | Final review |
 | `0.42.63.0` | Schema commands use the configured custom PGLite database path. | Troubleshooting must not assume every PGLite brain lives at the default path. | `current` after this pass in `docs/INSTALL.md`. | Final review |
 | `0.42.62.0` | Multi-source identity is preserved across links, timelines, webhooks, background writes, renames, and nested source trees. Existing multi-source brains need one `gbrain extract all` after upgrade. | Install, upgrade, and multi-source docs must include the one-time extraction step and source-scoped proof. | `current` after this pass in `docs/INSTALL.md`; linked multi-source docs require consistency review. | Final review |

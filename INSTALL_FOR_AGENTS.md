@@ -107,8 +107,8 @@ restart the shell or add the PATH export to the shell profile.
 
 ## Step 2: API Keys
 
-Ask the user whether they want semantic retrieval now or a keyword-only first
-test. GBrain can use ZeroEntropy, OpenAI,
+Ask the user whether they want semantic retrieval, synthesis, or a keyword-only
+first test. GBrain can use ZeroEntropy, OpenAI,
 Voyage, local servers, and other providers documented in
 `docs/integrations/embedding-providers.md`. Select the embedding model during
 `gbrain init` with `--embedding-model` and `--embedding-dimensions`. For an
@@ -121,6 +121,13 @@ export ZEROENTROPY_API_KEY=your_zeroentropy_api_key_here
 export OPENAI_API_KEY=your_openai_api_key_here
 export ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ```
+
+An embedding provider enables semantic retrieval. `gbrain think` synthesis
+also requires a chat-capable recipe. Do not infer chat capability from the
+presence of an embedding key: Voyage and ZeroEntropy, for example, are
+embedding/reranking providers. A single recipe may cover both capabilities, or
+the user may choose separate providers. `claude-cli` is a chat-only
+subscription route and still needs a separate embedding provider.
 
 If the user chooses a keyword-only first test, initialize with
 `gbrain init --pglite --no-embedding`. Do not run plain non-interactive
@@ -256,19 +263,29 @@ gbrain import ~/brain/ --no-embed
 gbrain search "known phrase from the brain"
 ```
 
-Report that exact-word search works and that semantic search, reranking,
-`think`, and maintenance remain unavailable until the user configures an
-embedding provider.
+Report that exact-word search works. Semantic search and provider-dependent
+reranking remain unavailable until the user configures embeddings. `think`
+without a chat provider may return gather-only output; maintenance phases vary
+and must be checked against their provider requirements.
 
-If the user chose the provider-backed path, import, embed, and verify both
-retrieval and synthesis:
+If the user chose the provider-backed path, import, embed, and verify
+retrieval:
 
 ```bash
 gbrain import ~/brain/
 gbrain embed --stale
 gbrain search "known concept from the brain"
-gbrain think "What are the key themes across these documents?"
 ```
+
+Only when a chat-capable model is configured, verify synthesis separately:
+
+```bash
+gbrain think "What are the key themes across these documents?" --json
+```
+
+Require `synthesisOk: true` in the JSON result. A zero exit status without that
+field is not proof: the command can deliberately return gather-only output
+when no usable chat provider is available.
 
 ## Step 4.5: Wire the Knowledge Graph
 
@@ -392,8 +409,11 @@ Verify: `gbrain integrations doctor` (after at least one is configured)
 
 ## Step 9: Verify
 
-Read `docs/GBRAIN_VERIFY.md` and run all 7 verification checks. Check #4 (live sync
-actually works) is the most important.
+Read `docs/GBRAIN_VERIFY.md` and run every check that applies to the selected
+engine and provider route. The runbook contains eight checks; embedding checks
+are expected to be limited on the keyword-only route, and the JSONB repair
+check is Postgres-specific. Check #4 (live sync actually works) is the most
+important for a synced repo.
 
 ## MCP, auth, and remote operation
 

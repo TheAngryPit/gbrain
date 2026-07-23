@@ -5,9 +5,9 @@ workflow, refreshed after the upstream merge
 
 Baseline reviewed: `docs/docs-consolidation/00-upstream-base.md`
 
-Pinned upstream commit: `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
+Pinned upstream commit: `0bd752b3f72eae72728f9091e12b3b7bfa4f5cbd`
 
-Current clean branch base: `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
+Current clean branch base: `0bd752b3f72eae72728f9091e12b3b7bfa4f5cbd`
 
 Proof level: `code_proven` static analysis only. No GBrain runtime command,
 server, migration, import, sync, or Docker lifecycle proof was attempted.
@@ -72,41 +72,41 @@ Execution notes:
 
 | Metric | Value |
 |---|---:|
-| files scanned | 2,674 |
-| files filtered by `.understandignore` | 45 binary or local-only files |
-| import-map files with imports | 1,826 |
-| import-map resolved edges | 4,983 |
-| current files structurally refreshed | 2,674 |
+| files scanned | 2,678 |
+| files filtered by `.understandignore` | 48 binary or local-only files |
+| import-map files with imports | 1,828 |
+| import-map resolved edges | 4,988 |
+| current files structurally refreshed | 2,678 |
 | files skipped | 0 |
-| graph nodes | 8,644 |
-| graph edges | 17,288 |
+| graph nodes | 8,664 |
+| graph edges | 15,683 |
 | layers | 9 |
 | guided tour steps | 6 |
 | validation issues | 0 |
 | broken edge/layer/tour references | 0 |
 | duplicate IDs | 0 |
 | missing scanned paths | 0 |
-| fingerprint baseline | 2,674 files |
+| fingerprint baseline | 2,678 files |
 
 Node types:
 
 | Type | Count |
 |---|---:|
-| file | 2,251 |
-| function | 5,679 |
-| class | 153 |
+| file | 2,263 |
+| function | 5,694 |
+| class | 154 |
 | schema | 138 |
 | pipeline | 7 |
-| config | 49 |
-| document | 367 |
+| config | 45 |
+| document | 363 |
 
 Edge types:
 
 | Type | Count |
 |---|---:|
-| contains | 5,832 |
-| calls | 6,335 |
-| imports | 4,983 |
+| contains | 5,848 |
+| calls | 4,709 |
+| imports | 4,988 |
 | defines_schema | 138 |
 
 ## System layers

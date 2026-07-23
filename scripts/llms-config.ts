@@ -210,7 +210,7 @@ export const SECTIONS: DocSection[] = [
       {
         title: "docs/GBRAIN_VERIFY.md",
         description:
-          "7-check post-setup verification. Start here when something feels off.",
+          "Route-aware eight-check post-setup verification for local, provider-backed, synced, and Postgres brains.",
         path: "docs/GBRAIN_VERIFY.md",
       },
       {

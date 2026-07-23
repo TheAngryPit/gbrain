@@ -4,7 +4,7 @@ Status: frozen baseline inventory for upstream PR preparation
 
 Baseline reviewed: `docs/docs-consolidation/00-upstream-base.md`
 
-Pinned upstream commit: `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
+Pinned upstream commit: `0bd752b3f72eae72728f9091e12b3b7bfa4f5cbd`
 
 Current upstream version reviewed: `0.42.64.0`
 
@@ -244,9 +244,10 @@ Observed counts and claims:
 - `CLAUDE.md` says the repo ships 29 skills.
 - `README.md` and `docs/INSTALL.md` say "43 skills."
 - `openclaw.plugin.json#skills`, which is the runtime skillpack manifest read
-  by `src/core/skillpack/bundle.ts`, currently lists 37 scaffolded skills.
-- `skills/manifest.json` currently lists 51 resolver/registry entries.
-- A repo metadata count finds 52 `skills/**/SKILL.md` files.
+  by `src/core/skillpack/bundle.ts`, listed 38 scaffolded skills at the frozen
+  baseline.
+- `skills/manifest.json` listed 52 resolver/registry entries at that baseline.
+- A baseline repo metadata count found 53 `skills/**/SKILL.md` files.
 - The broader `skills/` documentation area contains 57 files when resolver and
   shared markdown files are included, excluding conventions and migrations.
 
@@ -277,7 +278,7 @@ regenerate the LLM maps with the fork URL base before publishing.
 Observed tension:
 
 - `AGENTS.md` and `docs/RELEASING.md` say local CI runs "all 29 E2E files."
-- The current checkout has 147 `test/e2e/*.test.ts` files.
+- The frozen baseline had 158 `test/e2e/*.test.ts` files.
 - `scripts/run-e2e.sh` falls back to the full `test/e2e/*.test.ts` glob.
 - `scripts/ci-local.sh` computes `EXPECTED_ALL` dynamically from that glob.
 
@@ -351,14 +352,14 @@ The smallest coherent PR should avoid rewriting the docs system. It should:
 | `00-upstream-base.md` was reviewed | code_proven | Direct file read |
 | Inventory covers documentation-like files in the baseline checkout | code_proven | `01-documentation-manifest.tsv` has 350 rows generated from the refreshed `understand-anything` scan metadata; it is a frozen pre-consolidation snapshot |
 | Test fixture docs are separated from public docs | code_proven | Manifest role column marks test and fixture support paths |
-| Installed Understand refresh completed | code_proven | Fresh deterministic scan covers 2,674 current files; the structural graph has 8,644 nodes, 17,288 edges, 9 layers, and 6 tour steps |
-| Understand graph reference validation has no broken refs | code_proven | Fresh validation found 0 duplicate IDs, missing file paths, dangling edges, or broken layer/tour references; `.understand-anything/fingerprints.json` covers all 2,674 scanned files |
+| Installed Understand refresh completed | code_proven | Fresh deterministic scan covers 2,678 current files; the structural graph has 8,664 nodes, 15,683 edges, 9 layers, and 6 tour steps |
+| Understand graph reference validation has no broken refs | code_proven | Fresh validation found 0 duplicate IDs, missing file paths, dangling edges, or broken layer/tour references; `.understand-anything/fingerprints.json` covers all 2,678 scanned files |
 | Search-time fallback is `balanced` | code_proven | CodeGraph trace to `DEFAULT_SEARCH_MODE` and `resolveSearchMode()` in `src/core/search/mode.ts` |
 | Fresh init persists a recommended search mode | code_proven | CodeGraph trace to `runModePicker()` in `src/commands/init-mode-picker.ts` and both init paths in `src/commands/init.ts` |
-| Skillpack manifest currently has 37 scaffolded skills | code_proven | `openclaw.plugin.json#skills` count; `loadBundleManifest()` and `bundledSkillSlugs()` use that manifest |
-| Skill resolver manifest currently has 51 entries | code_proven | `skills/manifest.json#skills` count |
-| Current checkout has 52 `skills/**/SKILL.md` files | code_proven | `rg --files skills -g 'SKILL.md'` count |
-| Current checkout has 147 E2E test files | code_proven | Prior inventory count from `rg --files test/e2e -g '*.test.ts'`; `scripts/run-e2e.sh` and `scripts/ci-local.sh` use dynamic globs |
+| Skillpack manifest had 38 scaffolded skills at the frozen baseline | code_proven | `openclaw.plugin.json#skills` count; `loadBundleManifest()` and `bundledSkillSlugs()` use that manifest |
+| Skill resolver manifest had 52 entries at the frozen baseline | code_proven | `skills/manifest.json#skills` count |
+| Frozen baseline had 53 `skills/**/SKILL.md` files | code_proven | `rg --files skills -g 'SKILL.md'` count |
+| Frozen baseline had 158 E2E test files | code_proven | Baseline `rg --files test/e2e -g '*.test.ts'` count; `scripts/run-e2e.sh` and `scripts/ci-local.sh` use dynamic globs |
 | Current release baseline is v0.42.64.0 | code_proven | `VERSION` and top of `CHANGELOG.md` |
 | Changelog-to-current-capabilities ledger exists | implemented | `docs/docs-consolidation/05-current-capabilities-ledger.md` |
 | Documentation status taxonomy exists | implemented | `docs/docs-consolidation/06-documentation-status-taxonomy.md` |

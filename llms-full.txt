@@ -1021,17 +1021,20 @@ Current version: [`../VERSION`](../VERSION). Release history:
 
 For the first local route you need:
 
-- a terminal on macOS, Linux, or Windows;
+- a terminal on macOS or Linux; on Windows, use WSL 2 for the command journey
+  on this page;
 - permission to install Bun and the `gbrain` CLI for your user;
 - a writable folder for Markdown notes;
 - Git only if you use the source-install fallback or want to version the notes.
 
-Before initialization, decide whether you want the complete retrieval path now
-or only a local keyword-search test:
+Before initialization, decide whether you want semantic retrieval and
+synthesis now or only a local keyword-search test:
 
-- **Complete path:** prepare an embedding provider key before `gbrain init`.
-  This enables meaning-based search, reranking, `think`, and automated
-  maintenance.
+- **Semantic retrieval:** prepare an embedding provider before `gbrain init`.
+  This enables meaning-based search and provider-dependent reranking.
+- **Synthesis:** `gbrain think` also needs a usable chat provider. One provider
+  can supply both capabilities, but embedding-only providers such as Voyage or
+  ZeroEntropy do not enable synthesis by themselves.
 - **Keyword-only first test:** initialize with `--no-embedding`. You can import
   and search exact words without a provider, then add one later by rebuilding
   the PGLite index with `gbrain reinit-pglite`.
@@ -1086,8 +1089,9 @@ right first route for most people.
    install, you can accept the recommendation after reading the three options.
    You can change it later.
 4. Create one sample note, import it, and search for a known phrase.
-5. If you started without embeddings, add a provider when you are ready for
-   meaning-based search, reranking, `think`, or maintenance.
+5. If you started without providers, add embeddings for meaning-based search
+   and a chat-capable provider for synthesis or maintenance phases that call an
+   LLM.
 6. Replace the sample with your real
    [brain repo and sources](#brain-repo-and-sources).
 7. Connect an agent with [Connect an agent](#connect-an-agent) if you want one
@@ -1096,6 +1100,10 @@ right first route for most people.
 
 The following commands use the keyword-only path so the first test does not
 require an account or API key:
+
+On Windows, install WSL 2 with a current Linux distribution, open its terminal,
+and run the same commands there. Paths such as `~/gbrain-notes`, `export`, and
+shell redirection below are Linux shell syntax, not native PowerShell syntax.
 
 ```bash
 curl -fsSL https://bun.sh/install | bash
@@ -1112,6 +1120,10 @@ gbrain import ~/gbrain-notes --no-embed
 gbrain search "cedar lighthouse"
 ```
 
+`gbrain init` validates option names before it starts migration work. If it
+reports `Unknown option`, correct the command and run it again; the rejected
+invocation did not begin migrations.
+
 Check each milestone:
 
 - `gbrain --version` prints a version number.
@@ -1125,8 +1137,9 @@ Check each milestone:
 If the final search returns the sample, the basic local path works. You can now
 replace `~/gbrain-notes` with your own Markdown folder and repeat the import.
 
-To start with the complete path instead, create an account with one supported
-provider and obtain its API key. Provider use may incur charges. The following
+To start with semantic retrieval and synthesis instead, create an account with
+a provider recipe that supports both embedding and chat, or configure one
+provider for each capability. Provider use may incur charges. The following
 example uses OpenAI; replace `your_openai_api_key_here` with your real key
 before running it:
 
@@ -1158,7 +1171,10 @@ gbrain search "where is the verification beacon described?"
 
 `gbrain embed --stale` may take time on a large brain. The search should find
 the sample note even though the query does not repeat its exact phrase. To ask
-for a written answer based on brain evidence, use `gbrain think "<question>"`.
+for a written answer based on brain evidence, first confirm that a chat model
+is configured, then run `gbrain think "<question>" --json` and verify that
+`synthesisOk` is `true`. Exit status alone is not proof of synthesis: without a
+usable chat provider, `think` can return gather-only output.
 If embedding reports a provider or dimension problem, stop and use
 [Configure providers and keys](#configure-providers-and-keys).
 
@@ -1177,7 +1193,7 @@ repos, folders, or areas of life and work. A source lets you search each area
 alone without creating a separate database.
 
 1. Complete [Route A](#route-a-local-personal-brain-end-to-end) through local
-   initialization.
+   database initialization. You may reuse its `~/gbrain-notes` folder below.
 2. Keep one database unless the data owner, lifecycle, or access policy changes.
 3. Add each repo/domain as a source in
    [Brain repo and sources](#brain-repo-and-sources).
@@ -1188,18 +1204,34 @@ alone without creating a separate database.
 6. Sync and verify each source independently with
    [Import, sync, and operate](#import-sync-and-operate) and [Verify](#verify).
 
-Minimum source-routing shape:
+Minimum source-routing shape, starting from the Route A sample:
 
 ```bash
-gbrain sources add notes --path ~/brain-notes
-gbrain sources add work --path ~/work-brain
-gbrain sync --repo ~/brain-notes
-gbrain sync --repo ~/work-brain
+git -C ~/gbrain-notes init
+git -C ~/gbrain-notes add first-note.md
+git -C ~/gbrain-notes -c user.name="GBrain User" \
+  -c user.email="gbrain-user@example.invalid" commit -m "docs: add first note"
+
+mkdir -p ~/gbrain-work
+printf '# Work note\n\nThe amber compass belongs to the work source.\n' \
+  > ~/gbrain-work/work-note.md
+git -C ~/gbrain-work init
+git -C ~/gbrain-work add work-note.md
+git -C ~/gbrain-work -c user.name="GBrain User" \
+  -c user.email="gbrain-user@example.invalid" commit -m "docs: add work note"
+
+gbrain sources add notes --path ~/gbrain-notes
+gbrain sources add work --path ~/gbrain-work
+gbrain sync --repo ~/gbrain-notes
+gbrain sync --repo ~/gbrain-work
 gbrain search "known phrase from the notes source" --source notes
+gbrain search "amber compass" --source work
 ```
 
-Repeat the final search with each source name. A source-specific result proves
-that GBrain is routing the query to the intended content area.
+Both directories must be Git repos with committed tracked files before
+registration. Replace the sample paths with existing committed repos when you
+already have them. A source-specific result proves that GBrain is routing the
+query to the intended content area.
 
 ## Route C. Thin client, end to end
 
@@ -2142,8 +2174,8 @@ restart the shell or add the PATH export to the shell profile.
 
 ## Step 2: API Keys
 
-Ask the user whether they want semantic retrieval now or a keyword-only first
-test. GBrain can use ZeroEntropy, OpenAI,
+Ask the user whether they want semantic retrieval, synthesis, or a keyword-only
+first test. GBrain can use ZeroEntropy, OpenAI,
 Voyage, local servers, and other providers documented in
 `docs/integrations/embedding-providers.md`. Select the embedding model during
 `gbrain init` with `--embedding-model` and `--embedding-dimensions`. For an
@@ -2156,6 +2188,13 @@ export ZEROENTROPY_API_KEY=your_zeroentropy_api_key_here
 export OPENAI_API_KEY=your_openai_api_key_here
 export ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ```
+
+An embedding provider enables semantic retrieval. `gbrain think` synthesis
+also requires a chat-capable recipe. Do not infer chat capability from the
+presence of an embedding key: Voyage and ZeroEntropy, for example, are
+embedding/reranking providers. A single recipe may cover both capabilities, or
+the user may choose separate providers. `claude-cli` is a chat-only
+subscription route and still needs a separate embedding provider.
 
 If the user chooses a keyword-only first test, initialize with
 `gbrain init --pglite --no-embedding`. Do not run plain non-interactive
@@ -2291,19 +2330,29 @@ gbrain import ~/brain/ --no-embed
 gbrain search "known phrase from the brain"
 ```
 
-Report that exact-word search works and that semantic search, reranking,
-`think`, and maintenance remain unavailable until the user configures an
-embedding provider.
+Report that exact-word search works. Semantic search and provider-dependent
+reranking remain unavailable until the user configures embeddings. `think`
+without a chat provider may return gather-only output; maintenance phases vary
+and must be checked against their provider requirements.
 
-If the user chose the provider-backed path, import, embed, and verify both
-retrieval and synthesis:
+If the user chose the provider-backed path, import, embed, and verify
+retrieval:
 
 ```bash
 gbrain import ~/brain/
 gbrain embed --stale
 gbrain search "known concept from the brain"
-gbrain think "What are the key themes across these documents?"
 ```
+
+Only when a chat-capable model is configured, verify synthesis separately:
+
+```bash
+gbrain think "What are the key themes across these documents?" --json
+```
+
+Require `synthesisOk: true` in the JSON result. A zero exit status without that
+field is not proof: the command can deliberately return gather-only output
+when no usable chat provider is available.
 
 ## Step 4.5: Wire the Knowledge Graph
 
@@ -2427,8 +2476,11 @@ Verify: `gbrain integrations doctor` (after at least one is configured)
 
 ## Step 9: Verify
 
-Read `docs/GBRAIN_VERIFY.md` and run all 7 verification checks. Check #4 (live sync
-actually works) is the most important.
+Read `docs/GBRAIN_VERIFY.md` and run every check that applies to the selected
+engine and provider route. The runbook contains eight checks; embedding checks
+are expected to be limited on the keyword-only route, and the JSONB repair
+check is Postgres-specific. Check #4 (live sync actually works) is the most
+important for a synced repo.
 
 ## MCP, auth, and remote operation
 
@@ -5617,6 +5669,18 @@ Source: https://raw.githubusercontent.com/garrytan/gbrain/master/docs/GBRAIN_VER
 Run these checks after install to confirm every part of GBrain is working.
 Each check includes the command, expected output, and what to do if it fails.
 
+Not every check applies to every route:
+
+| Route | Required checks |
+|---|---|
+| Local keyword-only PGLite | 1 and 4c for imported content; 2, 3, 6, and 7 only when those features were configured |
+| Provider-backed PGLite | 1, 4b, 4c, and 5; 2, 3, 6, and 7 when configured |
+| Synced Postgres/shared brain | 1, 4, 5, and 8; 2, 3, 6, and 7 when configured |
+
+An optional check that was never configured is not a failure. A keyword-only
+brain is healthy with embeddings unavailable. PGLite does not need Postgres
+RLS or pgvector checks.
+
 The most important check is #4 (live sync). "Sync ran" is not the same as
 "sync worked." A sync that silently skips pages because of a pooler bug is
 worse than no sync at all, because you think it's working.
@@ -5631,12 +5695,12 @@ worse than no sync at all, because you think it's working.
 gbrain doctor --json
 ```
 
-**Expected:** All checks return `"ok"`:
+**Expected:** Engine and schema checks for the selected route return `"ok"`:
 - `connection`: connected, N pages
-- `pgvector`: extension installed
-- `rls`: enabled on all tables
 - `schema_version`: current
-- `embeddings`: coverage percentage
+- PGLite keyword-only: embeddings are reported as intentionally unconfigured
+- Provider-backed brain: embeddings report a coverage percentage
+- Postgres: pgvector is installed and the configured RLS checks pass
 
 **If it fails:** The doctor output includes specific fix instructions for each
 check. See `skills/setup/SKILL.md` Error Recovery table.
@@ -5658,6 +5722,8 @@ install paste (read `docs/GBRAIN_SKILLPACK.md`).
 
 ## 3. Auto-Update Configured
 
+Skip this check when the operator did not choose automatic update checks.
+
 **Command:**
 
 ```bash
@@ -5675,6 +5741,10 @@ Section 17.
 ## 4. Live Sync Actually Works
 
 This is the most important check. Three parts.
+
+For a one-time `gbrain import` route with no configured sync repo, run 4c
+immediately after a repeat import instead of waiting for a sync cycle. Checks
+4a and the scheduled-sync parts of 4c apply to registered Git-backed sources.
 
 ### 4a. Coverage Check
 
@@ -5764,6 +5834,9 @@ gbrain search "<text from the correction>"
 
 ## 5. Embedding Coverage
 
+Skip this check on the deliberate keyword-only route. Embedding coverage is a
+requirement only after an embedding provider has been configured.
+
 **Command:**
 
 ```bash
@@ -5842,6 +5915,8 @@ heuristics won't find them — file an issue with a sample page.
 
 ## 8. JSONB Frontmatter Integrity (v0.12.2)
 
+This check is for Postgres-backed brains. Skip it for PGLite.
+
 Postgres-backed brains created before v0.12.2 had double-encoded JSONB columns
 (`frontmatter->>'key'` returned NULL, GIN indexes were inert). `gbrain upgrade`
 runs `gbrain repair-jsonb` automatically via the `v0_12_2` orchestrator.
@@ -5877,13 +5952,15 @@ If this returns rows on a brain with person pages, the JSONB path is healthy.
 
 ---
 
-## Quick Verification (all checks in one pass)
+## Route verification checklist
+
+Run only the commands that apply to the route table at the top of this page.
 
 ```bash
 # 1. Schema
 gbrain doctor --json
 
-# 2. Sync recency
+# 2. Sync recency (registered sync sources only)
 gbrain config get sync.last_run
 
 # 3. Page count + embed coverage
@@ -5892,21 +5969,22 @@ gbrain stats
 # 4. Search works
 gbrain search "test query from your brain content"
 
-# 5. Catch any unembedded chunks
+# 5. Catch any unembedded chunks (provider-backed routes only)
 gbrain embed --stale
 
-# 6. Auto-update
+# 6. Auto-update (only when configured)
 gbrain check-update --json
 
-# 7. Knowledge graph populated (links + timeline > 0)
+# 7. Knowledge graph populated (only when graph extraction was configured)
 gbrain stats | grep -E 'links|timeline'
 
-# 8. JSONB integrity (v0.12.2 — Postgres only, PGLite always 0)
+# 8. JSONB integrity (Postgres only)
 gbrain repair-jsonb --dry-run --json
 ```
 
-If all eight return successfully, the installation is healthy. For the full
-end-to-end sync test (4c), push a real change and verify it appears in search.
+If every applicable check returns successfully, the installation is healthy
+for its selected route. For the full end-to-end sync test (4c), push a real
+change and verify it appears in search.
 
 ---
 

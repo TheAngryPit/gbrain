@@ -17,17 +17,20 @@ Current version: [`../VERSION`](../VERSION). Release history:
 
 For the first local route you need:
 
-- a terminal on macOS, Linux, or Windows;
+- a terminal on macOS or Linux; on Windows, use WSL 2 for the command journey
+  on this page;
 - permission to install Bun and the `gbrain` CLI for your user;
 - a writable folder for Markdown notes;
 - Git only if you use the source-install fallback or want to version the notes.
 
-Before initialization, decide whether you want the complete retrieval path now
-or only a local keyword-search test:
+Before initialization, decide whether you want semantic retrieval and
+synthesis now or only a local keyword-search test:
 
-- **Complete path:** prepare an embedding provider key before `gbrain init`.
-  This enables meaning-based search, reranking, `think`, and automated
-  maintenance.
+- **Semantic retrieval:** prepare an embedding provider before `gbrain init`.
+  This enables meaning-based search and provider-dependent reranking.
+- **Synthesis:** `gbrain think` also needs a usable chat provider. One provider
+  can supply both capabilities, but embedding-only providers such as Voyage or
+  ZeroEntropy do not enable synthesis by themselves.
 - **Keyword-only first test:** initialize with `--no-embedding`. You can import
   and search exact words without a provider, then add one later by rebuilding
   the PGLite index with `gbrain reinit-pglite`.
@@ -82,8 +85,9 @@ right first route for most people.
    install, you can accept the recommendation after reading the three options.
    You can change it later.
 4. Create one sample note, import it, and search for a known phrase.
-5. If you started without embeddings, add a provider when you are ready for
-   meaning-based search, reranking, `think`, or maintenance.
+5. If you started without providers, add embeddings for meaning-based search
+   and a chat-capable provider for synthesis or maintenance phases that call an
+   LLM.
 6. Replace the sample with your real
    [brain repo and sources](#brain-repo-and-sources).
 7. Connect an agent with [Connect an agent](#connect-an-agent) if you want one
@@ -92,6 +96,10 @@ right first route for most people.
 
 The following commands use the keyword-only path so the first test does not
 require an account or API key:
+
+On Windows, install WSL 2 with a current Linux distribution, open its terminal,
+and run the same commands there. Paths such as `~/gbrain-notes`, `export`, and
+shell redirection below are Linux shell syntax, not native PowerShell syntax.
 
 ```bash
 curl -fsSL https://bun.sh/install | bash
@@ -108,6 +116,10 @@ gbrain import ~/gbrain-notes --no-embed
 gbrain search "cedar lighthouse"
 ```
 
+`gbrain init` validates option names before it starts migration work. If it
+reports `Unknown option`, correct the command and run it again; the rejected
+invocation did not begin migrations.
+
 Check each milestone:
 
 - `gbrain --version` prints a version number.
@@ -121,8 +133,9 @@ Check each milestone:
 If the final search returns the sample, the basic local path works. You can now
 replace `~/gbrain-notes` with your own Markdown folder and repeat the import.
 
-To start with the complete path instead, create an account with one supported
-provider and obtain its API key. Provider use may incur charges. The following
+To start with semantic retrieval and synthesis instead, create an account with
+a provider recipe that supports both embedding and chat, or configure one
+provider for each capability. Provider use may incur charges. The following
 example uses OpenAI; replace `your_openai_api_key_here` with your real key
 before running it:
 
@@ -154,7 +167,10 @@ gbrain search "where is the verification beacon described?"
 
 `gbrain embed --stale` may take time on a large brain. The search should find
 the sample note even though the query does not repeat its exact phrase. To ask
-for a written answer based on brain evidence, use `gbrain think "<question>"`.
+for a written answer based on brain evidence, first confirm that a chat model
+is configured, then run `gbrain think "<question>" --json` and verify that
+`synthesisOk` is `true`. Exit status alone is not proof of synthesis: without a
+usable chat provider, `think` can return gather-only output.
 If embedding reports a provider or dimension problem, stop and use
 [Configure providers and keys](#configure-providers-and-keys).
 
@@ -173,7 +189,7 @@ repos, folders, or areas of life and work. A source lets you search each area
 alone without creating a separate database.
 
 1. Complete [Route A](#route-a-local-personal-brain-end-to-end) through local
-   initialization.
+   database initialization. You may reuse its `~/gbrain-notes` folder below.
 2. Keep one database unless the data owner, lifecycle, or access policy changes.
 3. Add each repo/domain as a source in
    [Brain repo and sources](#brain-repo-and-sources).
@@ -184,18 +200,34 @@ alone without creating a separate database.
 6. Sync and verify each source independently with
    [Import, sync, and operate](#import-sync-and-operate) and [Verify](#verify).
 
-Minimum source-routing shape:
+Minimum source-routing shape, starting from the Route A sample:
 
 ```bash
-gbrain sources add notes --path ~/brain-notes
-gbrain sources add work --path ~/work-brain
-gbrain sync --repo ~/brain-notes
-gbrain sync --repo ~/work-brain
+git -C ~/gbrain-notes init
+git -C ~/gbrain-notes add first-note.md
+git -C ~/gbrain-notes -c user.name="GBrain User" \
+  -c user.email="gbrain-user@example.invalid" commit -m "docs: add first note"
+
+mkdir -p ~/gbrain-work
+printf '# Work note\n\nThe amber compass belongs to the work source.\n' \
+  > ~/gbrain-work/work-note.md
+git -C ~/gbrain-work init
+git -C ~/gbrain-work add work-note.md
+git -C ~/gbrain-work -c user.name="GBrain User" \
+  -c user.email="gbrain-user@example.invalid" commit -m "docs: add work note"
+
+gbrain sources add notes --path ~/gbrain-notes
+gbrain sources add work --path ~/gbrain-work
+gbrain sync --repo ~/gbrain-notes
+gbrain sync --repo ~/gbrain-work
 gbrain search "known phrase from the notes source" --source notes
+gbrain search "amber compass" --source work
 ```
 
-Repeat the final search with each source name. A source-specific result proves
-that GBrain is routing the query to the intended content area.
+Both directories must be Git repos with committed tracked files before
+registration. Replace the sample paths with existing committed repos when you
+already have them. A source-specific result proves that GBrain is routing the
+query to the intended content area.
 
 ## Route C. Thin client, end to end
 

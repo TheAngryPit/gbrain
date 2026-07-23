@@ -38,7 +38,7 @@ Repo: https://github.com/garrytan/gbrain
 
 ## Debugging
 
-- [docs/GBRAIN_VERIFY.md](https://raw.githubusercontent.com/garrytan/gbrain/master/docs/GBRAIN_VERIFY.md): 7-check post-setup verification. Start here when something feels off.
+- [docs/GBRAIN_VERIFY.md](https://raw.githubusercontent.com/garrytan/gbrain/master/docs/GBRAIN_VERIFY.md): Route-aware eight-check post-setup verification for local, provider-backed, synced, and Postgres brains.
 - [docs/guides/minions-fix.md](https://raw.githubusercontent.com/garrytan/gbrain/master/docs/guides/minions-fix.md): Troubleshooting the Minions job queue.
 - [docs/integrations/reliability-repair.md](https://raw.githubusercontent.com/garrytan/gbrain/master/docs/integrations/reliability-repair.md): Data integrity recovery.
 

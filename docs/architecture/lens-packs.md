@@ -26,11 +26,17 @@ picks up the pack's declared phases on the next `gbrain dream` run.
 ### gbrain-creator
 Atom + concept content-creator lifecycle. Drives two cycle phases:
 
-- `extract_atoms` — per source, Haiku extracts 1-3 atoms from each
+- `extract_atoms`: per source, the model configured at
+  `models.dream.extract_atoms` extracts 1-3 atoms from each
   transcript with the closed 11-value `atom_type` enum (insight,
   anecdote, quote, framework, statistic, story_angle, strategy_angle,
   strategy, endorsement, critique, collection). Writes
-  `atoms/{YYYY-MM-DD}/{slug}` pages. Budget cap $0.30/source/run.
+  `atoms/{YYYY-MM-DD}/{slug}` pages. The default model is
+  `anthropic:claude-haiku-4-5`. The default budget cap is
+  $0.30/source/run and can be changed with
+  `cycle.extract_atoms.budget_usd`. Phase results report the selected model,
+  actual estimated spend, the configured budget, and whether the budget was
+  exhausted.
 - `synthesize_concepts` — globally aggregates atoms by frontmatter
   `concepts:` ref. Tier by count: T1 ≥10, T2 ≥5, T3 ≥2. T1/T2 get
   Sonnet narratives; T3 falls back to a deterministic stub. Writes
