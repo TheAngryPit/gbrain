@@ -91,7 +91,7 @@ gbrain schema add-link-type filed-in --page-type motion --target-type case
 gbrain schema add-link-type cites    --page-type motion --target-type precedent
 ```
 
-Now `## Facts` fences in your case notes can carry typed claims (`damages=5000000`, `filed_date=2026-05-23`, `judge=jane-doe`) that gbrain stores as first-class columns. `gbrain eval trajectory legal/cases/acme-v-widget` prints the case history with regressions flagged. The same trajectory substrate can support a legal-specific scorecard layer; the built-in `gbrain founder scorecard` command remains founder/company focused today.
+Now `## Facts` fences in your case notes can carry typed claims (`damages=5000000`, `filed_date=2026-05-23`, `judge=jane-doe`) that gbrain stores as first-class columns. `gbrain eval trajectory legal/cases/acme-v-widget` prints the case history with regressions flagged. The same trajectory data can support a legal-specific scorecard layer; the built-in `gbrain founder scorecard` command remains founder/company focused today.
 
 This isn't possible without typed page kinds. You can write the same prose in any note-taking app. Only gbrain treats the numbers as comparable across pages of the same type.
 

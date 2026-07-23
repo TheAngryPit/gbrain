@@ -14,7 +14,7 @@ manual choice. The installer may recommend `tokenmax` or `conservative` from
 the providers and model tiers it detects, so check the selected mode with
 `gbrain search modes` instead of assuming a fixed default.
 
-## Quick decision
+## Choose a command
 
 | Need | Use | Why |
 |---|---|---|
@@ -103,7 +103,7 @@ current turn.
 
 | Surface | Best use | Operator gate |
 |---|---|---|
-| `gbrain dream` | Run one maintenance cycle, often from cron or an approved manual task. | Confirm provider keys, cost expectations, and phase scope before scheduling. |
+| `gbrain dream` | Run one maintenance cycle from cron or an approved manual task. | Confirm provider keys, cost expectations, and phase scope before scheduling. |
 | `gbrain autopilot --install` | Keep a brain self-maintaining through a daemonized loop. | Confirm cadence, budget/cost caps, process ownership, and stop/recovery path. |
 | `gbrain doctor --remediation-plan --json` | Preview fix work before applying it. | Review the plan before `--remediate --yes`. |
 

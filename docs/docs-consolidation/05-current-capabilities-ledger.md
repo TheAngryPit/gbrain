@@ -8,7 +8,7 @@ migration, import, sync, or Docker lifecycle command was run.
 
 Baseline:
 
-- Current upstream commit: `1a449bf5015e8ff33af966d9f108a0b0e81a6da9`
+- Current upstream commit: `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
 - Current upstream version: `0.42.64.0`
 - Primary release window: `0.42.64.0` through `0.42.55.0`
 - Supporting release window for drift classification: `0.42.54.0` through
@@ -17,7 +17,10 @@ Baseline:
 ## How to use this ledger
 
 For the rest of this docs-only PR, treat `CHANGELOG.md` as the release
-evolution ledger. A later release does not automatically make a doc stale.
+evolution ledger and current source as the operational authority. The pinned
+`master` contains six reverts after the latest `0.42.64.0` entry, so the
+changelog alone cannot establish current behavior. A later release does not
+automatically make a doc stale.
 Classify it against the current capability it claims to document:
 
 - `current`: accurately represents the current capability for its intended
@@ -37,6 +40,10 @@ input. Do not count this ledger as proof that the public docs are fixed.
 
 | Release | Current capability or design semantic | Documentation obligation | Current docs status | Follow-up |
 |---|---|---|---|---|
+| `master` after `0.42.64.0` | The autopilot wrapper no longer adds `~/.bun/bin` to daemon `PATH`. | Human and agent install paths must require Bun on the non-interactive process PATH before `gbrain autopilot --install`. | `current` after this pass in `docs/INSTALL.md`, `INSTALL_FOR_AGENTS.md`, and `KEY_FILES.md`. | Final review |
+| `master` after `0.42.64.0` | `extract_atoms` no longer assigns concept labels, and zero-yield pages are not tombstoned. | Lens-pack docs must not promise automatic atom-to-concept flow or claim that a zero-yield drain cleared the backlog. | `current` after this pass in `docs/architecture/lens-packs.md` and `KEY_FILES.md`. | Final review |
+| `master` after `0.42.64.0` | Human remediation-plan output can claim the brain reached an unreachable target when the plan is empty. The JSON envelope remains explicit. | Operator and agent docs must use `target_unreachable`, `max_reachable_score`, and `blocked` as authority. | `current` after this pass in `docs/INSTALL.md`, `INSTALL_FOR_AGENTS.md`, and `KEY_FILES.md`. | Final review |
+| `master` after `0.42.64.0` | `reference/` wikilinks and the OpenRouter reranker recipe touchpoint were removed. | Do not advertise either reverted path as current capability. | `current`: no public operational claim required removal in this branch. | Final review |
 | `0.42.64.0` | Confidential OAuth clients can revoke tokens with client authentication; malformed, invalid, and mixed credentials fail closed. | MCP and shared-brain docs must teach revocation as part of the client lifecycle without weakening authentication. | `current` after this pass in `docs/INSTALL.md` and the MCP authority docs. | Final review |
 | `0.42.63.0` | Schema commands use the configured custom PGLite database path. | Troubleshooting must not assume every PGLite brain lives at the default path. | `current` after this pass in `docs/INSTALL.md`. | Final review |
 | `0.42.62.0` | Multi-source identity is preserved across links, timelines, webhooks, background writes, renames, and nested source trees. Existing multi-source brains need one `gbrain extract all` after upgrade. | Install, upgrade, and multi-source docs must include the one-time extraction step and source-scoped proof. | `current` after this pass in `docs/INSTALL.md`; linked multi-source docs require consistency review. | Final review |
@@ -56,7 +63,7 @@ input. Do not count this ledger as proof that the public docs are fixed.
 | `0.42.41.0` | Conversation facts survive fence reconciliation; destructive extract phases no longer full-walk after failed sync; net-negative fact reconciles warn. | Maintenance/dream/autopilot docs should avoid implying all fact rows are regenerated from fences. | `current`: `KEY_FILES.md`. `missing`: concise operator explanation in the future maintenance/mode-selection path. | #9, #10 |
 | `0.42.41.0` | `put_page` write-through is source-local; missing source repo paths are skipped instead of leaking writes into a global repo path. | Brain/source docs and Brain Repo Layout must make source-local write-through and source ownership explicit. | `current`: `AGENTS.md`, `CLAUDE.md`, `docs/architecture/brains-and-sources.md` for the two-axis model. `missing`: central Brain Repo Layout. | #8 |
 | `0.42.41.0` | Engine reconnect is a first-class method on PGLite and Postgres; autopilot survives transient DB errors. | Production docs should frame reconnect/autopilot failure modes around current self-healing behavior, not old crash-loop expectations. | `current`: `KEY_FILES.md`. `missing`: production checklist/failure-mode guide. | #10 |
-| `0.42.41.0` | Concurrent PGLite process locking uses heartbeat and dead/stalled-holder detection. | Docs should not describe PGLite as generally multi-process safe; they should explain where single-writer constraints still matter. | `current`: `docs/architecture/serve-sync-concurrency.md` and `docs/guides/push-context.md` include PGLite contention notes. `incomplete-current`: central install/topology docs do not branch on this. | #5, #7, #10 |
+| `0.42.41.0` | Concurrent PGLite process locking uses heartbeat and dead/stalled-holder detection. | Docs should not describe PGLite as multi-process safe; they should explain where single-writer constraints still matter. | `current`: `docs/architecture/serve-sync-concurrency.md` and `docs/guides/push-context.md` include PGLite contention notes. `incomplete-current`: central install/topology docs do not branch on this. | #5, #7, #10 |
 | `0.42.41.0` | Timeline dedup index drift is detected and repaired; `doctor` reports it. | Verification docs should route operators to doctor for schema/index drift instead of manual DB archaeology. | `current`: `AGENTS.md` common tasks and `docs/GBRAIN_VERIFY.md` direction. `incomplete-current`: production path missing. | #10 |
 | `0.42.41.0` | Cwd `.env` `DATABASE_URL` no longer silently retargets the brain; `GBRAIN_DATABASE_URL` and config-file authority remain distinct. | Production and secret/config docs should mention generic `DATABASE_URL` gotchas with current precedence and mitigation. | `incomplete-current`: scattered references exist in security/minions docs; no central production checklist. | #10 |
 | `0.42.41.0` | `gbrain sync --strategy code` honors `.gitignore` and skips generated/vendor dirs. | Code-brain and split-engine docs should avoid telling operators to hand-filter common generated dirs. | `current`: `KEY_FILES.md` and topology code-brain notes. `incomplete-current`: central topology branch missing. | #7, #8 |

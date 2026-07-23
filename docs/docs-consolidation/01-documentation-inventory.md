@@ -4,7 +4,7 @@ Status: frozen baseline inventory for upstream PR preparation
 
 Baseline reviewed: `docs/docs-consolidation/00-upstream-base.md`
 
-Pinned upstream commit: `1a449bf5015e8ff33af966d9f108a0b0e81a6da9`
+Pinned upstream commit: `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
 
 Current upstream version reviewed: `0.42.64.0`
 
@@ -351,8 +351,8 @@ The smallest coherent PR should avoid rewriting the docs system. It should:
 | `00-upstream-base.md` was reviewed | code_proven | Direct file read |
 | Inventory covers documentation-like files in the baseline checkout | code_proven | `01-documentation-manifest.tsv` has 350 rows generated from the refreshed `understand-anything` scan metadata; it is a frozen pre-consolidation snapshot |
 | Test fixture docs are separated from public docs | code_proven | Manifest role column marks test and fixture support paths |
-| Installed Understand refresh completed | code_proven | Fresh scan covers 2,676 current files; the graph has 12,212 nodes, 19,114 edges, 9 layers, and 6 tour steps |
-| Understand graph reference validation has no broken refs | code_proven | Fresh validation found 0 duplicate IDs, missing file paths, dangling edges, or broken layer/tour references; `.understand-anything/fingerprints.json` covers all 2,676 scanned files |
+| Installed Understand refresh completed | code_proven | Fresh deterministic scan covers 2,674 current files; the structural graph has 8,644 nodes, 17,288 edges, 9 layers, and 6 tour steps |
+| Understand graph reference validation has no broken refs | code_proven | Fresh validation found 0 duplicate IDs, missing file paths, dangling edges, or broken layer/tour references; `.understand-anything/fingerprints.json` covers all 2,674 scanned files |
 | Search-time fallback is `balanced` | code_proven | CodeGraph trace to `DEFAULT_SEARCH_MODE` and `resolveSearchMode()` in `src/core/search/mode.ts` |
 | Fresh init persists a recommended search mode | code_proven | CodeGraph trace to `runModePicker()` in `src/commands/init-mode-picker.ts` and both init paths in `src/commands/init.ts` |
 | Skillpack manifest currently has 37 scaffolded skills | code_proven | `openclaw.plugin.json#skills` count; `loadBundleManifest()` and `bundledSkillSlugs()` use that manifest |

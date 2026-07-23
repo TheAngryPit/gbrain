@@ -5,15 +5,22 @@ Status: upstream documentation consolidation baseline
 ## Git
 
 - Current branch: codex/docs-consolidate-operational-v2
-- Pinned upstream commit: 1a449bf5015e8ff33af966d9f108a0b0e81a6da9
+- Pinned upstream commit: a356f64e4f36c6f3dd9251c7127e557fc161c7cd
 - Current upstream version: 0.42.64.0
 
 ## Current release baseline
 
 The consolidation baseline was refreshed after upstream advanced past the first
-inventory pass. The changelog is now the first authority for documentation
-drift checks: docs should be compared against the current release series before
-rewrites are proposed.
+inventory pass. The changelog is the first release-evolution ledger for
+documentation drift checks. Current source is authoritative when `master`
+changes after the latest release entry.
+
+The pinned commit contains six reverts after the `0.42.64.0` changelog entry.
+They remove the autopilot Bun PATH fix, `reference/` wikilink extraction,
+automatic concept labels from `extract_atoms`, zero-yield atom tombstones, the
+doctor human-output fix for unreachable targets, and the OpenRouter reranker
+recipe touchpoint. This docs pass reviewed each revert against current
+operational claims.
 
 Latest release entries reviewed:
 

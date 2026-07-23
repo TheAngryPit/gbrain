@@ -447,7 +447,7 @@ retrieval, synthesis, maintenance, and push-based context.
 
 | Mode | Choose it when | Current default shape |
 |---|---|---|
-| `conservative` | You want the smallest and cheapest context, often for frequent lightweight calls | 4K token budget, 10 results, no expansion or reranker |
+| `conservative` | You want the smallest and cheapest context for frequent lightweight calls | 4K token budget, 10 results, no expansion or reranker |
 | `balanced` | You want a moderate general-purpose starting point | 12K token budget, 25 results, reranking, graph signals, and title context |
 | `tokenmax` | Missing relevant material costs more than extra latency or spend | No token cap, 50 results, expansion, reranking, graph signals, and per-chunk context |
 
@@ -571,6 +571,23 @@ gbrain doctor --remediation-plan --json
 `gbrain dream` and autopilot run maintenance, extraction, synthesis, and
 consolidation flows. `doctor --remediation-plan` previews fix work before
 you let GBrain apply it.
+
+Before installing the autopilot daemon, make Bun available to non-interactive
+shells. On macOS with zsh, put this in `~/.zshenv`:
+
+```bash
+export PATH="$HOME/.bun/bin:$PATH"
+```
+
+The generated daemon wrapper sources `~/.zshenv`, but it does not add Bun to
+`PATH`. Without this setting, the scheduled process can fail with
+`env: bun: No such file or directory`.
+
+On current `master`, the human remediation-plan output can print both "Target
+unreachable" and "Brain is at target" when no autonomous step can raise the
+score. Use the JSON fields as the authority. Check `target_unreachable`,
+`max_reachable_score`, and `blocked` before deciding that remediation is
+complete.
 
 To choose between `gbrain search`, `gbrain think`, maintenance cycles, and
 push-context channels such as `volunteer_context` or `gbrain watch`, read
@@ -814,7 +831,8 @@ backup that has not been restored is only an archive.
   upgrade migrations. If sync still appears wedged after upgrade, use `doctor`
   and the live-sync runbook before reaching for `--force-break-lock`.
 - Review `gbrain doctor --remediation-plan --json` before running automated
-  remediation.
+  remediation. If `target_unreachable` is true, resolve the entries in
+  `blocked`; an empty `plan` does not mean the brain reached the target.
 
 ### 8. Verify production health
 
@@ -972,12 +990,12 @@ keyword-only route.
 | `schema_version: 0` | Global postinstall hook did not run | Run `gbrain apply-migrations --yes`; fall back to source install if needed. |
 | Semantic search returns little or nothing | Embeddings missing or provider misconfigured | Run `gbrain doctor --json`, then `gbrain embed --stale` after fixing the provider. |
 | Keyword search works but `query` is weak | Embeddings or reranker are stale/missing | Check provider keys, dimensions, and `gbrain stats`. |
-| Sync says it ran but page count is low | Direct/session DB path unreachable, often on IPv4-only Supabase hosts | Set `GBRAIN_DIRECT_DATABASE_URL` to the Session pooler or enable IPv4. |
+| Sync says it ran but page count is low | Direct/session DB path unreachable on an IPv4-only Supabase host | Set `GBRAIN_DIRECT_DATABASE_URL` to the Session pooler or enable IPv4. |
 | `sync --force-break-lock` says no lock was held | No active sync lock existed | Use `gbrain doctor --json` and the live-sync runbook to inspect the actual stale or wedged condition. |
 | Remote agent cannot connect | HTTP server bound to loopback or issuer URL mismatch | Set `--public-url`; use `--bind` only when remote access is intended. |
 | Token works for too much | Client has broad scopes or legacy bearer access | Register a scoped OAuth client and revoke old tokens. |
 | Local checkout's `.env` points GBrain at the wrong DB | Generic `DATABASE_URL` belongs to another app | Use `GBRAIN_DATABASE_URL` for deliberate GBrain DB overrides. |
-| Large embed jobs wedge queue progress | Unpaced backfill on a busy pooler | Use `gbrain embed --stale --pace` or `GBRAIN_PACE_MODE=balanced`. |
+| Large embed jobs block queue progress | Unpaced backfill on a busy pooler | Use `gbrain embed --stale --pace` or `GBRAIN_PACE_MODE=balanced`. |
 | PGLite reports lock corruption | More than one process opened the database, or a previous process ended uncleanly | Stop other GBrain processes and use `gbrain reinit-pglite`. Do not delete lock files manually. |
 | Changing the embedding model with `config set` is refused | Embedding dimensions are part of the schema | Use `gbrain reinit-pglite` or the Postgres embedding migration guide. |
 | An upgraded multi-source brain returns content under the wrong source | Older derived facts predate current source identity | Run `gbrain extract all` once, then verify each source independently. |

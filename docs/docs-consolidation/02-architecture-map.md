@@ -5,9 +5,9 @@ workflow, refreshed after the upstream merge
 
 Baseline reviewed: `docs/docs-consolidation/00-upstream-base.md`
 
-Pinned upstream commit: `1a449bf5015e8ff33af966d9f108a0b0e81a6da9`
+Pinned upstream commit: `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
 
-Current clean branch base: `1a449bf5015e8ff33af966d9f108a0b0e81a6da9`
+Current clean branch base: `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
 
 Proof level: `code_proven` static analysis only. No GBrain runtime command,
 server, migration, import, sync, or Docker lifecycle proof was attempted.
@@ -30,9 +30,7 @@ The installed skill scripts were used for:
 
 - project scan
 - import-map extraction
-- semantic batching
 - structural extraction
-- batch merge/normalization
 - inline graph validation
 - fingerprint baseline generation
 
@@ -50,16 +48,14 @@ Execution notes:
   the current upstream base and CodeGraph was synced.
 - Understand then performed a fresh deterministic scan and import-map
   extraction across the repository.
-- The prior semantic graph was used only as a baseline for unchanged files.
-  Every path changed since that baseline was structurally re-extracted from the
-  current checkout. Existing semantic summaries were retained only for
-  unchanged files.
+- Every included path was structurally re-extracted from the current checkout.
+  The stale semantic graph from an older commit was not retained.
 - Layers and the guided tour were rebuilt deterministically in English from the
   current file-level graph. The skill's inline validator then checked node,
   edge, layer, and tour integrity.
 - This is not a fresh full LLM semantic review of every file. It is a fresh
-  full file inventory plus structural refresh of all changed paths and retained
-  semantic context for unchanged paths.
+  full file inventory, tree-sitter structural extraction, import/call graph,
+  integrity validation, and fingerprint baseline.
 
 ## Generated artifacts
 
@@ -68,56 +64,50 @@ Execution notes:
 - `.understand-anything/meta.json`
 - `.understand-anything/intermediate/scan-result.json`
 - `.understand-anything/intermediate/import-map.json`
-- `.understand-anything/intermediate/batches.json`
 - `.understand-anything/intermediate/assembled-graph.json`
 - `.understand-anything/intermediate/review.json`
+- `.understand-anything/intermediate/structural-refresh-report.json`
 
 ## Graph summary
 
 | Metric | Value |
 |---|---:|
-| files scanned | 2,676 |
-| files filtered by `.understandignore` | 43 binary or local-only files |
-| import-map files with imports | 1,828 |
-| import-map resolved edges | 4,985 |
-| paths changed since semantic baseline | 441 |
-| current changed files structurally refreshed | 437 |
-| removed or ignored changed paths | 4 |
+| files scanned | 2,674 |
+| files filtered by `.understandignore` | 45 binary or local-only files |
+| import-map files with imports | 1,826 |
+| import-map resolved edges | 4,983 |
+| current files structurally refreshed | 2,674 |
 | files skipped | 0 |
-| graph nodes | 12,212 |
-| graph edges | 19,114 |
+| graph nodes | 8,644 |
+| graph edges | 17,288 |
 | layers | 9 |
 | guided tour steps | 6 |
 | validation issues | 0 |
 | broken edge/layer/tour references | 0 |
-| orphan-node warnings | 254 |
-| fingerprint baseline | 2,676 files |
+| duplicate IDs | 0 |
+| missing scanned paths | 0 |
+| fingerprint baseline | 2,674 files |
 
 Node types:
 
 | Type | Count |
 |---|---:|
-| file | 2,212 |
-| function | 5,332 |
-| class | 147 |
-| schema | 40 |
+| file | 2,251 |
+| function | 5,679 |
+| class | 153 |
+| schema | 138 |
 | pipeline | 7 |
-| concept | 4,057 |
-| config | 45 |
+| config | 49 |
 | document | 367 |
-| service | 2 |
-| table | 3 |
 
 Edge types:
 
 | Type | Count |
 |---|---:|
-| contains | 7,348 |
-| calls | 3,869 |
-| imports | 4,985 |
-| documents | 2,188 |
-| tested_by | 12 |
-| exports | 712 |
+| contains | 5,832 |
+| calls | 6,335 |
+| imports | 4,983 |
+| defines_schema | 138 |
 
 ## System layers
 
@@ -389,7 +379,8 @@ This pass is static. It is useful for docs consolidation, but it does not prove:
 - generated LLM bundle freshness after future edits.
 
 The graph is generated and validator-clean. Its layers and tour were assembled
-deterministically. The retained semantic summaries for unchanged files were not
-freshly checked against every source file, and the graph does not preserve
-per-edge retained-versus-fresh provenance. The five domain subagent passes and
-the independent graph audit are code/doc inspection, not runtime proof.
+deterministically. It does not contain a fresh file-by-file LLM semantic review;
+its claims are limited to repository inventory, parsed structure, imports,
+resolved call relationships, and graph integrity. The five original domain
+subagent passes and the current graph audit are code/doc inspection, not runtime
+proof.

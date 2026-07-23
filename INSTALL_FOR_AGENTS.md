@@ -367,6 +367,10 @@ If skipped, minimal defaults are installed automatically.
 Set up using your platform's scheduler (OpenClaw cron, Railway cron, crontab), or skip the
 platform glue entirely with `gbrain autopilot --install` (built-in self-maintaining daemon):
 
+- **Daemon PATH prerequisite**: make Bun available to non-interactive
+  processes before installing autopilot. On macOS with zsh, add
+  `export PATH="$HOME/.bun/bin:$PATH"` to `~/.zshenv`. The generated wrapper
+  sources that file but does not add Bun to `PATH`.
 - **Live sync** (every 15 min): `gbrain sync --repo ~/brain && gbrain embed --stale`
   — or `gbrain sync --watch` for a continuous loop.
 - **Auto-update** (daily): `gbrain check-update --json` (tell user, never auto-install).
@@ -535,6 +539,12 @@ gbrain onboard --auto --max-usd 5
 Refuses without `--max-usd N`. Runs auto-eligible items only. The
 autopilot daemon also consults onboard recommendations on its tick — no
 explicit agent action needed for the autonomous path.
+
+When evaluating a remediation plan, request JSON and inspect
+`target_unreachable`, `max_reachable_score`, and `blocked`. On current
+`master`, human output can still print "Brain is at target" after reporting
+an unreachable target when the plan is empty. Do not relay that sentence as
+success unless the score meets the requested target.
 
 **Remote / federated brain installs (MCP):**
 The `run_onboard` MCP op (admin scope) lets thin-client agents probe

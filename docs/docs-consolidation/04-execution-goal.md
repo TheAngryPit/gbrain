@@ -22,7 +22,7 @@ The branch already has:
 
 - PRD issue: <https://github.com/TheAngryPit/gbrain/issues/1>
 - Published AFK issues: #2 through #14
-- Current upstream baseline: `1a449bf5015e8ff33af966d9f108a0b0e81a6da9`
+- Current upstream baseline: `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
 - Current branch commit at goal authoring time: `2889685a`
 - Current upstream version after refresh: `0.42.64.0`
 - Documentation consolidation artifacts under `docs/docs-consolidation/`

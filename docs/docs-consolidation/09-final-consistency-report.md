@@ -17,8 +17,9 @@ import, sync, or Docker lifecycle command was run.
 - `docs/docs-consolidation/03-issue-breakdown.md`
 - Current branch diff against `upstream/master`.
 - Fresh `git fetch upstream --prune` on 2026-07-23, confirming
-  `upstream/master` remains at `1a449bf5015e8ff33af966d9f108a0b0e81a6da9`
+  `upstream/master` at `a356f64e4f36c6f3dd9251c7127e557fc161c7cd`
   and version `0.42.64.0`.
+- Source review of all six post-release reverts on current `master`.
 - Landed docs and generated maps listed below.
 - CodeGraph source exploration and a read-only source-contract review.
 - `unslop`, `deslop`, `teach`, and the current Vercel writing guidelines as
@@ -31,6 +32,10 @@ found concrete install and auth issues that needed patching before PR handoff:
 
 | Finding | Resolution | Proof |
 | --- | --- | --- |
+| Six source reverts landed on `master` after the latest `0.42.64.0` changelog entry. | Rebased onto `a356f64e`, reviewed every revert, and treated current source as authority where it differs from the release ledger. | `git log` and source diff for `a356f64e`, `a1dadebd`, `c43ed81c`, `1d0df706`, `8078c46a`, and `e20a6a53` |
+| The autopilot install path assumed the generated wrapper made Bun available to scheduled processes. | Added the non-interactive PATH prerequisite to the human path, agent protocol, and architecture index. | Source read of `writeWrapperScript()` in `src/commands/autopilot.ts` |
+| Lens-pack docs promised that one dream schedule automatically carried newly extracted atoms into concept synthesis. | Documented that current extraction does not assign `concepts` labels and that zero-yield pages can remain in the atom backlog. | Source reads of `src/core/cycle/extract-atoms.ts`, `synthesize-concepts.ts`, and `extract-atoms-drain.ts` |
+| Human remediation-plan output can contradict its own unreachable-target result. | Directed humans and agents to the stable JSON fields and blocked prerequisites. | Source read of `runRemediationPlan()` in `src/commands/doctor.ts` |
 | `docs/INSTALL.md` was a reference page more than a route-by-route install journey. | Added Routes A-E at the top of `docs/INSTALL.md`. Route A now takes a human from prerequisites through a sample note, import, search, expected results, and the optional semantic-retrieval step. | docs inspection plus pedagogical review |
 | The first local route ran plain `gbrain init --pglite` before a provider choice. That command can fail in non-interactive use with no provider. | Split the human journey into a provider-backed path and a deterministic `--no-embedding` keyword-only path. Added the supported `reinit-pglite` transition for adding embeddings later. | CodeGraph trace to `src/commands/init.ts`, `src/commands/init-provider-picker.ts`, and the deferred-setup E2E tests |
 | The docs called `balanced` the fresh-install default. | Documented the installer recommendation separately from the internal unset-config fallback. Fresh init normally recommends `tokenmax`, or `conservative` for Haiku-class/no-OpenAI setups; an unset config falls back to `balanced`. | CodeGraph trace to `src/commands/init-mode-picker.ts` and `src/core/search/mode.ts` |
@@ -51,15 +56,14 @@ found concrete install and auth issues that needed patching before PR handoff:
 | `SECURITY.md` still described open DCR as granting `client_credentials` by default. | Updated the warning to the current consent-bearing `authorization_code` default and the explicit `--enable-dcr-insecure` opt-in. | CodeGraph trace to `src/core/oauth-provider.ts` |
 | The ChatGPT guide said exactly four operations were `localOnly`. | Replaced the brittle count with examples and named `src/core/operations.ts` as authority. | CodeGraph trace to the current operation registry |
 
-The current `understand-anything` pass scanned all 2,676 included files,
-re-extracted every current file changed since the semantic baseline, retained
-semantic summaries only for unchanged files, and regenerated layers, tour, and
-fingerprints. Validation found zero duplicate IDs, missing file paths, dangling
-edges, or broken layer/tour references. The 254 orphan-node warnings remain
-visible as connectivity limits rather than integrity failures. An independent
-audit confirmed the structural result and also confirmed that retained semantic
-summaries were carried forward rather than freshly validated. All local
-Understand and CodeGraph state will be removed from the publishable diff.
+The current `understand-anything` pass scanned and structurally extracted all
+2,674 included files, regenerated the import and call graph, rebuilt the layers
+and tour, and produced a 2,674-file fingerprint baseline. Validation found zero
+duplicate IDs, missing file paths, dangling edges, or broken layer/tour
+references. The stale semantic graph from an older commit was not retained.
+This is structural static analysis, not a fresh file-by-file LLM semantic
+review. All local Understand and CodeGraph state will be removed from the
+publishable diff.
 
 ## PRD acceptance map
 
@@ -151,8 +155,8 @@ No runtime behavior change was introduced by this branch.
 | Targeted stale-count search for #13 phrases | pass |
 | Secret-pattern scan over staged #13 diff | pass |
 | `bun test test/build-llms.test.ts` | pass with a temporary Bun config that disables unrelated repository-wide test preloads; no dependency install was performed |
-| `codegraph sync` after the final source review | pass: index up to date at 2,138 files, 23,550 nodes, and 120,420 edges |
-| Fresh repository-wide `understand-anything` pass | pass: 2,676 files, 12,212 nodes, 19,114 edges, 9 layers, 6 tour steps, 0 validation issues, and a 2,676-file fingerprint baseline |
+| Fresh CodeGraph index after the final source review | pass: index up to date at 2,136 files, 23,539 nodes, and 120,474 edges |
+| Fresh repository-wide `understand-anything` pass | pass: 2,674 files, 8,644 nodes, 17,288 edges, 9 layers, 6 tour steps, 0 validation issues, and a 2,674-file fingerprint baseline |
 | Final `openclaw-autoreview` pass | pending final content freeze |
 
 ## Proof limits

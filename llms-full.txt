@@ -1451,7 +1451,7 @@ retrieval, synthesis, maintenance, and push-based context.
 
 | Mode | Choose it when | Current default shape |
 |---|---|---|
-| `conservative` | You want the smallest and cheapest context, often for frequent lightweight calls | 4K token budget, 10 results, no expansion or reranker |
+| `conservative` | You want the smallest and cheapest context for frequent lightweight calls | 4K token budget, 10 results, no expansion or reranker |
 | `balanced` | You want a moderate general-purpose starting point | 12K token budget, 25 results, reranking, graph signals, and title context |
 | `tokenmax` | Missing relevant material costs more than extra latency or spend | No token cap, 50 results, expansion, reranking, graph signals, and per-chunk context |
 
@@ -1575,6 +1575,23 @@ gbrain doctor --remediation-plan --json
 `gbrain dream` and autopilot run maintenance, extraction, synthesis, and
 consolidation flows. `doctor --remediation-plan` previews fix work before
 you let GBrain apply it.
+
+Before installing the autopilot daemon, make Bun available to non-interactive
+shells. On macOS with zsh, put this in `~/.zshenv`:
+
+```bash
+export PATH="$HOME/.bun/bin:$PATH"
+```
+
+The generated daemon wrapper sources `~/.zshenv`, but it does not add Bun to
+`PATH`. Without this setting, the scheduled process can fail with
+`env: bun: No such file or directory`.
+
+On current `master`, the human remediation-plan output can print both "Target
+unreachable" and "Brain is at target" when no autonomous step can raise the
+score. Use the JSON fields as the authority. Check `target_unreachable`,
+`max_reachable_score`, and `blocked` before deciding that remediation is
+complete.
 
 To choose between `gbrain search`, `gbrain think`, maintenance cycles, and
 push-context channels such as `volunteer_context` or `gbrain watch`, read
@@ -1818,7 +1835,8 @@ backup that has not been restored is only an archive.
   upgrade migrations. If sync still appears wedged after upgrade, use `doctor`
   and the live-sync runbook before reaching for `--force-break-lock`.
 - Review `gbrain doctor --remediation-plan --json` before running automated
-  remediation.
+  remediation. If `target_unreachable` is true, resolve the entries in
+  `blocked`; an empty `plan` does not mean the brain reached the target.
 
 ### 8. Verify production health
 
@@ -1976,12 +1994,12 @@ keyword-only route.
 | `schema_version: 0` | Global postinstall hook did not run | Run `gbrain apply-migrations --yes`; fall back to source install if needed. |
 | Semantic search returns little or nothing | Embeddings missing or provider misconfigured | Run `gbrain doctor --json`, then `gbrain embed --stale` after fixing the provider. |
 | Keyword search works but `query` is weak | Embeddings or reranker are stale/missing | Check provider keys, dimensions, and `gbrain stats`. |
-| Sync says it ran but page count is low | Direct/session DB path unreachable, often on IPv4-only Supabase hosts | Set `GBRAIN_DIRECT_DATABASE_URL` to the Session pooler or enable IPv4. |
+| Sync says it ran but page count is low | Direct/session DB path unreachable on an IPv4-only Supabase host | Set `GBRAIN_DIRECT_DATABASE_URL` to the Session pooler or enable IPv4. |
 | `sync --force-break-lock` says no lock was held | No active sync lock existed | Use `gbrain doctor --json` and the live-sync runbook to inspect the actual stale or wedged condition. |
 | Remote agent cannot connect | HTTP server bound to loopback or issuer URL mismatch | Set `--public-url`; use `--bind` only when remote access is intended. |
 | Token works for too much | Client has broad scopes or legacy bearer access | Register a scoped OAuth client and revoke old tokens. |
 | Local checkout's `.env` points GBrain at the wrong DB | Generic `DATABASE_URL` belongs to another app | Use `GBRAIN_DATABASE_URL` for deliberate GBrain DB overrides. |
-| Large embed jobs wedge queue progress | Unpaced backfill on a busy pooler | Use `gbrain embed --stale --pace` or `GBRAIN_PACE_MODE=balanced`. |
+| Large embed jobs block queue progress | Unpaced backfill on a busy pooler | Use `gbrain embed --stale --pace` or `GBRAIN_PACE_MODE=balanced`. |
 | PGLite reports lock corruption | More than one process opened the database, or a previous process ended uncleanly | Stop other GBrain processes and use `gbrain reinit-pglite`. Do not delete lock files manually. |
 | Changing the embedding model with `config set` is refused | Embedding dimensions are part of the schema | Use `gbrain reinit-pglite` or the Postgres embedding migration guide. |
 | An upgraded multi-source brain returns content under the wrong source | Older derived facts predate current source identity | Run `gbrain extract all` once, then verify each source independently. |
@@ -2384,6 +2402,10 @@ If skipped, minimal defaults are installed automatically.
 Set up using your platform's scheduler (OpenClaw cron, Railway cron, crontab), or skip the
 platform glue entirely with `gbrain autopilot --install` (built-in self-maintaining daemon):
 
+- **Daemon PATH prerequisite**: make Bun available to non-interactive
+  processes before installing autopilot. On macOS with zsh, add
+  `export PATH="$HOME/.bun/bin:$PATH"` to `~/.zshenv`. The generated wrapper
+  sources that file but does not add Bun to `PATH`.
 - **Live sync** (every 15 min): `gbrain sync --repo ~/brain && gbrain embed --stale`
   — or `gbrain sync --watch` for a continuous loop.
 - **Auto-update** (daily): `gbrain check-update --json` (tell user, never auto-install).
@@ -2552,6 +2574,12 @@ gbrain onboard --auto --max-usd 5
 Refuses without `--max-usd N`. Runs auto-eligible items only. The
 autopilot daemon also consults onboard recommendations on its tick — no
 explicit agent action needed for the autonomous path.
+
+When evaluating a remediation plan, request JSON and inspect
+`target_unreachable`, `max_reachable_score`, and `blocked`. On current
+`master`, human output can still print "Brain is at target" after reporting
+an unreachable target when the plan is empty. Do not relay that sentence as
+success unless the score meets the requested target.
 
 **Remote / federated brain installs (MCP):**
 The `run_onboard` MCP op (admin scope) lets thin-client agents probe
@@ -3783,7 +3811,7 @@ gbrain schema add-link-type filed-in --page-type motion --target-type case
 gbrain schema add-link-type cites    --page-type motion --target-type precedent
 ```
 
-Now `## Facts` fences in your case notes can carry typed claims (`damages=5000000`, `filed_date=2026-05-23`, `judge=jane-doe`) that gbrain stores as first-class columns. `gbrain eval trajectory legal/cases/acme-v-widget` prints the case history with regressions flagged. The same trajectory substrate can support a legal-specific scorecard layer; the built-in `gbrain founder scorecard` command remains founder/company focused today.
+Now `## Facts` fences in your case notes can carry typed claims (`damages=5000000`, `filed_date=2026-05-23`, `judge=jane-doe`) that gbrain stores as first-class columns. `gbrain eval trajectory legal/cases/acme-v-widget` prints the case history with regressions flagged. The same trajectory data can support a legal-specific scorecard layer; the built-in `gbrain founder scorecard` command remains founder/company focused today.
 
 This isn't possible without typed page kinds. You can write the same prose in any note-taking app. Only gbrain treats the numbers as comparable across pages of the same type.
 
@@ -5066,7 +5094,7 @@ manual choice. The installer may recommend `tokenmax` or `conservative` from
 the providers and model tiers it detects, so check the selected mode with
 `gbrain search modes` instead of assuming a fixed default.
 
-## Quick decision
+## Choose a command
 
 | Need | Use | Why |
 |---|---|---|
@@ -5155,7 +5183,7 @@ current turn.
 
 | Surface | Best use | Operator gate |
 |---|---|---|
-| `gbrain dream` | Run one maintenance cycle, often from cron or an approved manual task. | Confirm provider keys, cost expectations, and phase scope before scheduling. |
+| `gbrain dream` | Run one maintenance cycle from cron or an approved manual task. | Confirm provider keys, cost expectations, and phase scope before scheduling. |
 | `gbrain autopilot --install` | Keep a brain self-maintaining through a daemonized loop. | Confirm cadence, budget/cost caps, process ownership, and stop/recovery path. |
 | `gbrain doctor --remediation-plan --json` | Preview fix work before applying it. | Review the plan before `--remediate --yes`. |
 
