@@ -48,13 +48,13 @@ at anything other than `http://localhost:<port>` so the OAuth issuer in
 discovery metadata matches what clients hit (RFC 8414 §3.3).
 
 Supported clients:
-- **ChatGPT** — requires OAuth 2.1 + PKCE. Works natively with `--http`.
-- **Claude Desktop** — add the remote connector through Settings >
+- **ChatGPT**: requires OAuth 2.1 + PKCE. Works natively with `--http`.
+- **Claude Desktop**: add the remote connector through Settings >
   Integrations. The current client guide documents bearer-token setup.
-- **Cowork** — use the remote MCP settings exposed by the client; bearer-token
+- **Cowork**: use the remote MCP settings exposed by the client; bearer-token
   setup is documented in the client guide.
-- **Perplexity** — OAuth 2.1 client credentials grant.
-- **Claude Code, Codex, Cursor, Windsurf, and other coding agents** — use the
+- **Perplexity**: OAuth 2.1 client credentials grant.
+- **Claude Code, Codex, Cursor, Windsurf, and other coding agents**: use the
   matching client page. The GBrain server supports OAuth and legacy bearer
   tokens, but each client has its own supported connector/auth shape.
 

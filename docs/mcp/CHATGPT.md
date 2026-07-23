@@ -80,10 +80,11 @@ calls show up in the admin dashboard's live SSE feed in real time.
 ## Scopes
 
 ChatGPT clients can request any combination of `read`, `write`, `admin`. The
-scopes granted at consent time are enforced on every tool call. Four
-operations are `localOnly` and rejected over HTTP regardless of scope:
-`sync_brain`, `file_upload`, `file_list`, `file_url`. The HTTP server fails
-closed for any attempt to reach local filesystem surface area.
+scopes granted at consent time are enforced on every tool call. Operations
+marked `localOnly` are rejected over HTTP regardless of scope. Examples include
+`sync_brain`, `file_upload`, `file_list`, and `file_url`. The registry in
+`src/core/operations.ts` is authoritative, and the HTTP server fails closed
+for attempts to reach local filesystem surface area.
 
 Recommended ChatGPT scope: `read write`. Leave `admin` for your local CLI
 and the admin dashboard.

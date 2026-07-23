@@ -1,12 +1,12 @@
-# Documentation Inventory
+# Documentation inventory
 
 Status: frozen baseline inventory for upstream PR preparation
 
 Baseline reviewed: `docs/docs-consolidation/00-upstream-base.md`
 
-Pinned upstream commit: `090bb53203557f5659563ea28c1c847c32167aeb`
+Pinned upstream commit: `1a449bf5015e8ff33af966d9f108a0b0e81a6da9`
 
-Current upstream version reviewed: `0.42.44.0`
+Current upstream version reviewed: `0.42.64.0`
 
 ## Scope
 
@@ -40,7 +40,7 @@ The current-capabilities ledger maps the current release window from
 `CHANGELOG.md` into documentation obligations. The status taxonomy defines the
 trust labels and action rules used by the remaining consolidation issues.
 
-## Inventory Summary
+## Inventory summary
 
 Documentation-like files found: 350
 
@@ -79,7 +79,7 @@ analysis output as upstream documentation input.
 | script references | 1 | upstream scrub table |
 | test fixture docs | 80 | fixtures, synthetic corpora, test-only skills, README files under test paths |
 
-## Documentation Authority Layers
+## Documentation authority layers
 
 ### User and agent entrypoints
 
@@ -155,7 +155,7 @@ explicit current-state banner:
 They are valuable for provenance and roadmap context, but they can contain old
 counts, old defaults, or pre-implementation design language.
 
-## Changelog-First Drift Baseline
+## Changelog-first drift baseline
 
 The first executable issue should not start by rewriting entrypoints. It should
 build a current-capabilities ledger from `CHANGELOG.md`, then compare docs
@@ -185,7 +185,7 @@ current version" as a first-class drift class. Some docs should be retired or
 labelled historical, but many should be evolved to include these current
 capabilities.
 
-## Consolidation Findings
+## Consolidation findings
 
 Status taxonomy artifact:
 
@@ -204,7 +204,7 @@ That is acceptable only if each surface has a clear job:
 - `docs/tutorials/*`: guided learning path.
 - `docs/mcp/*`: client-specific connection reference.
 
-Current risk: quick-start snippets in `README.md` and `docs/INSTALL.md` show
+Baseline risk: abbreviated setup snippets in `README.md` and `docs/INSTALL.md` showed
 `gbrain init --pglite` without carrying the same mandatory agent search-mode
 stop gate that `AGENTS.md` and `INSTALL_FOR_AGENTS.md` emphasize.
 
@@ -267,7 +267,7 @@ Observed tension:
   fork-specific `LLMS_REPO_BASE` before publishing.
 - `scripts/llms-config.ts` implements that override.
 - The checked-in `llms.txt` and `llms-full.txt` still point at upstream
-  `https://raw.githubusercontent.com/garrytan/gbrain/master/...` URLs.
+  upstream raw-content URLs.
 
 PR direction: keep this separate from an upstream docs PR. For the fork itself,
 regenerate the LLM maps with the fork URL base before publishing.
@@ -320,7 +320,7 @@ PR direction: add a small archive/current-state convention. Historical docs can
 stay, but their header should say whether they are current reference, design
 record, incident record, or backlog/archive.
 
-## Suggested Docs-Only PR Shape
+## Suggested docs-only PR shape
 
 The smallest coherent PR should avoid rewriting the docs system. It should:
 
@@ -344,29 +344,29 @@ The smallest coherent PR should avoid rewriting the docs system. It should:
 9. Regenerate `llms.txt` and `llms-full.txt` only if their source text changes
    or if publishing this fork with a fork-specific URL base.
 
-## Proof Map
+## Proof map
 
 | Claim | Proof level | Evidence |
 |---|---|---|
 | `00-upstream-base.md` was reviewed | code_proven | Direct file read |
 | Inventory covers documentation-like files in the baseline checkout | code_proven | `01-documentation-manifest.tsv` has 350 rows generated from the refreshed `understand-anything` scan metadata; it is a frozen pre-consolidation snapshot |
 | Test fixture docs are separated from public docs | code_proven | Manifest role column marks test and fixture support paths |
-| Installed Understand refresh completed | code_proven | `.understand-anything/knowledge-graph.json` has 13,660 nodes, 17,749 edges, 9 layers, and 6 tour steps at branch commit `416f2ae29788a16cba1b20fb33ccf05a4eb665c1` |
-| Understand graph reference validation has no broken refs | code_proven | Fresh validation found 0 broken edge, layer, or tour references; `.understand-anything/fingerprints.json` covers 2,537 files |
+| Installed Understand refresh completed | code_proven | Fresh scan covers 2,676 current files; the graph has 12,212 nodes, 19,114 edges, 9 layers, and 6 tour steps |
+| Understand graph reference validation has no broken refs | code_proven | Fresh validation found 0 duplicate IDs, missing file paths, dangling edges, or broken layer/tour references; `.understand-anything/fingerprints.json` covers all 2,676 scanned files |
 | Search-time fallback is `balanced` | code_proven | CodeGraph trace to `DEFAULT_SEARCH_MODE` and `resolveSearchMode()` in `src/core/search/mode.ts` |
 | Fresh init persists a recommended search mode | code_proven | CodeGraph trace to `runModePicker()` in `src/commands/init-mode-picker.ts` and both init paths in `src/commands/init.ts` |
 | Skillpack manifest currently has 37 scaffolded skills | code_proven | `openclaw.plugin.json#skills` count; `loadBundleManifest()` and `bundledSkillSlugs()` use that manifest |
 | Skill resolver manifest currently has 51 entries | code_proven | `skills/manifest.json#skills` count |
 | Current checkout has 52 `skills/**/SKILL.md` files | code_proven | `rg --files skills -g 'SKILL.md'` count |
 | Current checkout has 147 E2E test files | code_proven | Prior inventory count from `rg --files test/e2e -g '*.test.ts'`; `scripts/run-e2e.sh` and `scripts/ci-local.sh` use dynamic globs |
-| Current release baseline is v0.42.44.0 | code_proven | `VERSION` and top of `CHANGELOG.md` |
+| Current release baseline is v0.42.64.0 | code_proven | `VERSION` and top of `CHANGELOG.md` |
 | Changelog-to-current-capabilities ledger exists | implemented | `docs/docs-consolidation/05-current-capabilities-ledger.md` |
 | Documentation status taxonomy exists | implemented | `docs/docs-consolidation/06-documentation-status-taxonomy.md` |
 | Current HTTP OAuth path is engine-aware | code_proven | CodeGraph trace to `src/commands/serve-http.ts`, `GBrainOAuthProvider`, and PGLite OAuth bootstrap logic |
 | Generated LLM maps are still upstream-linked in this fork | code_proven | Direct reads of `llms.txt`, `llms-full.txt`, `AGENTS.md`, and `scripts/llms-config.ts` |
 | No GBrain runtime proof was attempted | implemented | This task intentionally avoided runtime commands by instruction |
 
-## Open Questions For The PR
+## Open questions for the PR
 
 - Should README keep both search-mode facts inline, or link to one canonical
   search-mode reference after naming runtime fallback vs init recommendation?

@@ -1,4 +1,4 @@
-# GBrain Documentation Consolidation
+# GBrain documentation consolidation
 
 This context captures the language used for upstream GBrain documentation
 consolidation work. It is a glossary only; implementation decisions belong in
@@ -67,7 +67,7 @@ connect, verify, upgrade, and use GBrain's main supported shapes. This includes
 personal brain and company brain setup, brain/source routing, deployment
 topologies, search-mode choice, provider configuration, health checks, MCP
 connection, sync/import flows, and normal upgrade/migration guidance.
-_Avoid_: basic usage, quick start when the flow includes topology or operating
+_Avoid_: basic usage, abbreviated setup when the flow includes topology or operating
 model choices
 
 **Operational Branching**:

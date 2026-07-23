@@ -1,11 +1,11 @@
-# Brittle Counts and Generated Maps
+# Brittle counts and generated maps
 
 Status: issue #13 implementation note
 
 This pass removes broad hard-coded counts from current operational docs and
 keeps numbers only where they are scoped to a source or a worked example.
 
-## Replaced Claims
+## Replaced claims
 
 | Surface | Previous claim | Replacement |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ keeps numbers only where they are scoped to a source or a worked example.
 | `scripts/llms-config.ts` project summary | `26 fat-markdown skills` | Count-free "resolver-routed skill surface" wording. |
 | `scripts/llms-config.ts` scaling guide description | Broad `300+ skills` framing plus `306 skills` in generated map text | Scoped as a 306-skill production case study rather than a current repo-wide count. |
 
-## Generated Map Authority
+## Generated map authority
 
 `llms.txt` and `llms-full.txt` are generated outputs, not hand-maintained
 documentation pages. The source of truth for their structure and descriptions is
@@ -33,7 +33,7 @@ Current guidance now appears in:
 - `scripts/build-llms.ts`: generated `llms-full.txt` includes fork regeneration
   guidance so one-shot ingestion carries the rule too.
 
-## Scoped Counts Kept
+## Scoped counts kept
 
 Counts remain where they are part of a benchmark, concrete case study, or
 script-derived operational path. Examples:
@@ -45,7 +45,7 @@ script-derived operational path. Examples:
 - `docs/RELEASING.md` keeps diff-aware E2E wording that points to
   `scripts/select-e2e.ts` instead of maintaining a manual E2E file count.
 
-## Verification Intent
+## Verification intent
 
 The validation for this slice should search current operational docs and
 generated-map sources for the removed stale phrases, regenerate the LLM maps,

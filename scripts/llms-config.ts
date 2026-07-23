@@ -28,7 +28,7 @@ export type DocSection = {
 export const PROJECT = {
   name: "GBrain",
   summary:
-    "GBrain is a personal knowledge brain and GStack mod for agent platforms. Pluggable engines (PGLite default, Postgres+pgvector for scale), contract-first operations, and a resolver-routed skill surface. Teaches agents brain ops, ingestion, enrichment, scheduling, identity, and access control.",
+    "GBrain is a knowledge system for people, teams, and their agents. It uses PGLite by default or Postgres with pgvector for shared and larger deployments. The documentation covers installation, search, synthesis, maintenance, identity, access control, and agent integration.",
   repoUrl: "https://github.com/garrytan/gbrain",
   rawBaseUrl:
     process.env.LLMS_REPO_BASE ??
@@ -67,6 +67,12 @@ export const SECTIONS: DocSection[] = [
           "The thin-client / remote-MCP / cross-modal routing seam: isThinClient detection, callRemoteTool, SSRF-hardened URL validation, per-command routing.",
         path: "docs/architecture/thin-client.md",
         includeInFull: false,
+      },
+      {
+        title: "docs/INSTALL.md",
+        description:
+          "Canonical human installation and operation guide with complete routes for local, multi-source, thin-client, shared, and isolated deployments.",
+        path: "docs/INSTALL.md",
       },
       {
         title: "INSTALL_FOR_AGENTS.md",
@@ -167,7 +173,7 @@ export const SECTIONS: DocSection[] = [
       {
         title: "docs/guides/mode-selection.md",
         description:
-          "Mode Selection Guide: when to use gbrain search, gbrain think, gbrain dream/autopilot, retrieval reflex, volunteer_context, gbrain volunteer-context, and gbrain watch; includes search-mode cost, quality, and safety implications.",
+          "Mode selection guide: when to use gbrain search, gbrain think, gbrain dream/autopilot, retrieval reflex, volunteer_context, gbrain volunteer-context, and gbrain watch; includes search-mode cost, quality, and safety implications.",
         path: "docs/guides/mode-selection.md",
       },
       {

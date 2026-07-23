@@ -1,4 +1,4 @@
-# Triage Labels
+# Triage labels
 
 | Role | Tracker label | Meaning |
 |---|---|---|

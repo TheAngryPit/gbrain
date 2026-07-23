@@ -1,22 +1,23 @@
-# GBrain Operating Models and Deployment Topologies
+# GBrain operating models and deployment topologies
 
-GBrain has two separate setup decisions:
+This page helps you answer two separate setup questions:
 
-1. **Operating model:** who owns or uses the brain, and what access policy they
-   need.
-2. **Deployment topology:** where the database, server, and clients run, and how
-   agents connect.
+1. **Who will use the brain?** This chooses the operating model and access
+   policy.
+2. **Where will it run?** This chooses the deployment topology and connection
+   path.
 
-Do not collapse those into one choice. A solo user may still need a remote,
+Make both choices. A solo user may still need a remote,
 split-engine, or isolated topology because an agent runs on another machine, a
 cloud client requires HTTPS, or a security boundary needs a separate home. A
 family, household, team, or company brain can start with one trusted shared
 agent and later move to OAuth-scoped clients without changing the basic concept
 of a shared brain.
 
-Pair this doc with `docs/architecture/brains-and-sources.md`. That doc explains
-the brain/source axes: WHICH database and WHICH repo inside that database. This
-doc helps choose the operating model first, then the deployment topology.
+Start with the two decision trees below. After you have one answer from each
+tree, return to [`../INSTALL.md`](../INSTALL.md) and follow the matching route.
+Read [`brains-and-sources.md`](brains-and-sources.md) when you need to decide
+whether content belongs in another source or another database.
 
 ## Operating model decision tree
 
@@ -83,7 +84,7 @@ mounts are the primitives that keep those choices explicit.
 | Team or company brain | Topology 2 with Postgres/Supabase and HTTP MCP | Use auth-scoped mode for separate user/agent credentials. Use mounted brains when teams own separate databases. |
 | Cross-team/company network | Topology 4 plus source scoping inside each brain | Keep ownership at the brain boundary; use sources when the owner stays the same and only the repo/domain changes. |
 
-## Topology 1 — Local/default single brain
+## Topology 1: local/default single brain
 
 ```
   ┌────────────────┐
@@ -147,12 +148,12 @@ instead of a local DB connection:
 
 ```jsonc
 {
-  "engine": "postgres",  // ignored — never used
+    "engine": "postgres",  // ignored; never used
   "remote_mcp": {
     "issuer_url": "https://brain-host.local:3001",
     "mcp_url":    "https://brain-host.local:3001/mcp",
-    "oauth_client_id": "neuromancer-...",
-    "oauth_client_secret": "..."  // or set the env var instead
+    "oauth_client_id": "your_oauth_client_id_here",
+    "oauth_client_secret": "your_oauth_client_secret_here"
   }
 }
 ```
@@ -416,11 +417,11 @@ have to know about Conductor.
 
 <a id="topology-mounted-cross-team-brains"></a>
 
-## Topology 4 — Mounted/cross-team brains
+## Topology 4: mounted/cross-team brains
 
 ```
   ┌──────────────────────────────────────────────┐
-  │ host brain — user's personal or primary DB   │
+  │ host brain, the user's personal or primary DB│
   │  ├── source: notes                           │
   │  └── source: work                            │
   └──────────────────────────────────────────────┘
@@ -459,7 +460,7 @@ Setup primitives:
 gbrain mounts add team-brain \
   --path /path/to/team-brain \
   --engine postgres \
-  --db-url postgresql://...
+  --db-url postgresql://user:password@host:5432/database
 gbrain mounts list
 gbrain mounts disable team-brain
 gbrain mounts enable team-brain
@@ -477,10 +478,10 @@ choose when to query another brain, synthesize the answer, and cite
 `brain:source:slug` or otherwise show which brain answered. If a remote or
 subagent context lacks permission to read mounts, it must stay local-only.
 
-## Topology modifier — Security-driven isolation
+## Topology modifier: security-driven isolation
 
-Security isolation is not a separate database engine; it is a reason to choose a
-more complex topology even when the operating model is simple.
+Security isolation is not a separate database engine. It may require more
+components even when one person owns the brain.
 
 Use isolation when:
 
@@ -522,9 +523,9 @@ The agent's MCP client picks the alias and thus the destination per tool
 call. There's no global gbrain orchestrator that knows about all of them
 simultaneously — that's by design.
 
-## When NOT to use these topologies
+## When not to use these topologies
 
-- **Don't use Topology 2 just because it sounds more production-grade.** Use it
+- **Do not use Topology 2 for its name.** Use it
   when host/client separation, cloud-client exposure, machine capacity, or a
   security boundary actually matters. Otherwise a local `gbrain` install +
   `gbrain serve` (stdio) is simpler and faster.
@@ -545,7 +546,7 @@ simultaneously — that's by design.
 
 - `docs/architecture/brains-and-sources.md` — in-brain organization (brains
   vs sources axes).
-- `docs/tutorials/company-brain.md` — worked auth-scoped shared-brain example
+- `docs/tutorials/company-brain.md`: worked auth-scoped shared-brain example
   with single-agent shared mode as the simpler alternative.
 - `docs/mcp/CLAUDE_DESKTOP.md` and siblings — per-client MCP setup.
 - `gbrain init --help` and `gbrain auth --help` for command-level details.

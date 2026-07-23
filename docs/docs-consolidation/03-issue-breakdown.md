@@ -1,4 +1,4 @@
-# Documentation Consolidation Issue Breakdown
+# Documentation consolidation issue breakdown
 
 Status: published issue proposal and execution ledger
 
@@ -9,7 +9,7 @@ Tracker mode: GitHub issues, `ready-for-agent` label where available
 All slices are AFK. No slice requires local runtime inspection or GBrain
 runtime commands.
 
-## Execution Artifacts
+## Execution artifacts
 
 | Issue | Artifact |
 |---|---|
@@ -27,7 +27,7 @@ runtime commands.
 | [#13](https://github.com/TheAngryPit/gbrain/issues/13) | `docs/docs-consolidation/08-brittle-counts-and-generated-maps.md`, `README.md`, `AGENTS.md`, `INSTALL_FOR_AGENTS.md`, `CLAUDE.md`, `docs/TESTING.md`, `scripts/llms-config.ts`, `scripts/build-llms.ts`, `llms.txt`, `llms-full.txt` |
 | [#14](https://github.com/TheAngryPit/gbrain/issues/14) | `docs/docs-consolidation/09-final-consistency-report.md`, `docs/docs-consolidation/10-pr-proposal.md` |
 
-## Published Issues
+## Published issues
 
 | Issue | Title |
 |---|---|
@@ -45,14 +45,14 @@ runtime commands.
 | [#13](https://github.com/TheAngryPit/gbrain/issues/13) | Docs: remove or qualify brittle counts and generated-map claims |
 | [#14](https://github.com/TheAngryPit/gbrain/issues/14) | Docs: run final docs-only consistency pass against changelog, source, PRD, and feedback |
 
-## Ground Rule
+## Ground rule
 
 The first implementation issue must build a changelog-to-current-capabilities
 baseline. The docs PR should not start by rewriting entrypoints from stale
 mental models; it should first derive the current product/design state from
 `CHANGELOG.md` and then compare the docs against that release reality.
 
-## Proposed Issues
+## Proposed issues
 
 1. **Build changelog-to-current-capabilities baseline**
    - Type: AFK

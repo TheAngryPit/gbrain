@@ -10,15 +10,19 @@ Do not open a public issue for security vulnerabilities.
 
 ## Remote MCP Security
 
-### ⚠️ Do NOT use open OAuth client registration for remote MCP
+### Do not enable open OAuth client registration without a policy
 
 If you expose GBrain's HTTP MCP server, keep Dynamic Client Registration
 disabled unless you have a deliberate registration policy in front of it.
-An attacker who discovers an open `/register` endpoint can:
+With `--enable-dcr`, an unauthenticated caller can register an OAuth client, but
+current releases restrict that path to browser-approved `authorization_code`
+by default. The more dangerous machine-to-machine `client_credentials` grant
+is accepted only when the operator explicitly enables
+`--enable-dcr-insecure`.
 
-1. Register a new OAuth client via `POST /register`
-2. Use `client_credentials` grant to obtain a bearer token
-3. Access all brain data via the MCP tools
+Even consent-gated registration broadens the public authentication surface.
+Leave DCR off unless self-registration is required, restrict scopes, and
+pre-register known clients where practical.
 
 ### Recommended: `gbrain serve --http`
 

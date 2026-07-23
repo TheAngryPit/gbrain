@@ -1,4 +1,4 @@
-# Documentation Status Taxonomy
+# Documentation status taxonomy
 
 Status: reusable trust/status taxonomy for docs consolidation issue #3
 
@@ -9,7 +9,7 @@ migration, import, sync, or Docker lifecycle command was run.
 This taxonomy applies to upstream documentation input. It does not classify
 `docs/docs-consolidation/*` outputs as public docs.
 
-## Status Values
+## Status values
 
 Use these values consistently in consolidation notes, review checklists, and
 status banners when a banner is needed.
@@ -28,7 +28,7 @@ status banners when a banner is needed.
 | `FORK_LOCAL` | Fork-specific coordination/output, not upstream canon. | Local PRD, consolidation artifacts, fork URL regeneration notes. | Keep under `docs/docs-consolidation/` or clearly isolate from upstream input. |
 | `FIXTURE_OR_EVAL_SUPPORT` | Test fixture, benchmark corpus, or support markdown. | Docs-like file exists only for tests/evals/examples. | Exclude from public-doc trust decisions unless referenced by public docs. |
 
-## Classification Rules
+## Classification rules
 
 1. Start from `CHANGELOG.md`.
    - Use `docs/docs-consolidation/05-current-capabilities-ledger.md` as the
@@ -46,7 +46,7 @@ status banners when a banner is needed.
 
 3. Classify by reader consequence, not by age.
    - A one-year-old doc can be `CURRENT`.
-   - A week-old doc can be `INCOMPLETE_CURRENT` if it misses a just-landed
+   - A week-old doc can be `INCOMPLETE_CURRENT` if it misses a recent
      operational branch.
    - A release note stays `HISTORICAL` even when perfectly accurate.
 
@@ -79,7 +79,7 @@ status banners when a banner is needed.
    - They should not tell users to read `docs/docs-consolidation/*` for normal
      install, operation, or architecture guidance.
 
-## Banner Convention
+## Banner convention
 
 Use banners sparingly. Add one when a doc lives in a place where readers may
 mistake it for current operational guidance.
@@ -110,7 +110,7 @@ For design docs:
 
 Do not banner every current doc. Over-labeling creates noise.
 
-## Action Queue By Area
+## Action queue by area
 
 | Area | Representative docs | Status now | Action |
 |---|---|---|---|
@@ -126,7 +126,7 @@ Do not banner every current doc. Over-labeling creates noise.
 | Generated maps | `llms.txt`, `llms-full.txt`, `scripts/llms-config.ts` | `GENERATED` plus count drift | Update generator/source text before regenerating; avoid hand edits. |
 | Test/fixture docs | `test/**`, eval fixtures | `FIXTURE_OR_EVAL_SUPPORT` | Keep excluded from public documentation status except when public docs cite them. |
 
-## Status Label Placement
+## Status label placement
 
 Apply labels at the top of:
 
@@ -144,7 +144,7 @@ Avoid labels on:
 - docs that will be updated directly in the same PR;
 - consolidation-only artifacts.
 
-## Inventory Refresh Result
+## Inventory refresh result
 
 The existing inventory remains the working file count baseline for this PR:
 
@@ -156,7 +156,7 @@ The existing inventory remains the working file count baseline for this PR:
 This taxonomy updates the inventory by adding a trust/status layer on top of
 the manifest. It does not replace `01-documentation-manifest.tsv`.
 
-## Proof Map
+## Proof map
 
 | Claim | Proof level | Evidence |
 |---|---|---|

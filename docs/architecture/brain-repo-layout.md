@@ -1,4 +1,4 @@
-# Brain Repo Layout
+# Brain repo layout
 
 A Brain Repo Layout is the editable Markdown shape of your knowledge brain. It
 is separate from:
@@ -40,7 +40,7 @@ brain/
   projects/              # active initiatives and workstreams
   notes/                 # catch-all notes, memos, principles, one-offs
   sources/               # transcripts, references, raw import summaries
-  inbox/                 # quick capture and triage
+  inbox/                 # incoming capture and triage
   archive/               # historical or retired pages
 ```
 
@@ -58,7 +58,7 @@ wiki/concepts/
 wiki/analysis/
 ```
 
-Do not create every directory just because it exists in an example. A good
+Do not create every directory because it exists in an example. A useful
 layout is the smallest set of homes that lets humans and agents file new pages
 without guessing.
 
@@ -118,7 +118,7 @@ routing, provenance, or schema behavior:
 | `.gbrain-source` | Routing | Pins a checkout or subdirectory to a source. Edit only when changing source routing. |
 | `.gbrain-mount` | Routing | Pins a checkout to another brain. Edit only when changing brain routing. |
 | `.sources/<source_id>/` | Multi-source render layout | Used when GBrain renders non-default source pages under one brain directory. Prefer registered source checkouts for normal authoring. |
-| `.raw/` and `sources/` provenance material | Ingestion/provenance | Prefer append-only updates. Do not rewrite raw evidence just to make prose cleaner. |
+| `.raw/` and `sources/` provenance material | Ingestion/provenance | Prefer append-only updates. Do not rewrite raw evidence only to make prose cleaner. |
 | Generated frontmatter such as `dream_generated`, `ingested_via`, `captured_at`, `ingested_at`, `legacy_type` | GBrain or migration jobs | Preserve unless you understand the feature that stamped it. |
 
 The file layer is editable, but it is not the whole system of record. The
@@ -164,11 +164,11 @@ Important consequences:
 
 Deeper references:
 
-- `docs/architecture/type-taxonomy.md` — current `gbrain-base-v2` taxonomy.
-- `docs/architecture/schema-packs.md` — schema-pack resolution, authoring, and
+- `docs/architecture/type-taxonomy.md`: current `gbrain-base-v2` taxonomy.
+- `docs/architecture/schema-packs.md`: schema-pack resolution, authoring, and
   recovery.
-- `docs/schema-author-tutorial.md` — short custom-pack walkthrough.
-- `docs/GBRAIN_RECOMMENDED_SCHEMA.md` — long-form operational-brain layout
+- `docs/schema-author-tutorial.md`: short custom-pack walkthrough.
+- `docs/GBRAIN_RECOMMENDED_SCHEMA.md`: long-form operational-brain layout
   manifesto; useful as design reference, not a mandatory starter tree.
 
 ## Backup rule

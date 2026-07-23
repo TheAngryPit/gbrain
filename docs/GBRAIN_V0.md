@@ -2,7 +2,7 @@
 
 > Status: HISTORICAL.
 > This is the original v0 spec from before PGLite landed. Several forward-looking
-> sections — most notably the SQLite engine plan — were superseded by PGLite
+> sections, including the SQLite engine plan, were superseded by PGLite
 > (embedded Postgres via WASM), which uses the same SQL dialect as Postgres and
 > eliminates the need for a separate FTS5/sqlite-vss translation layer. Current
 > engine guidance lives in [`ENGINES.md`](ENGINES.md); release history lives in

@@ -1,12 +1,18 @@
 # GBrain mode selection
 
-Use this guide after install, before wiring agents or recurring jobs. GBrain
-uses "mode" in two different ways:
+Use this guide after installation, whether you use GBrain yourself or through an
+agent. GBrain uses the word "mode" for two different choices:
 
-- **Operational command:** what you ask GBrain to do now: retrieve, synthesize,
-  maintain, or volunteer context.
+- **Task:** what you want GBrain to do now: find evidence, write an answer,
+  maintain the brain, or volunteer context.
 - **Search mode bundle:** the cost/quality profile behind retrieval:
   `conservative`, `balanced`, or `tokenmax`.
+
+If you are unsure, use `gbrain search` for finding material and
+`gbrain think` for a written answer. For search mode, `balanced` is a moderate
+manual choice. The installer may recommend `tokenmax` or `conservative` from
+the providers and model tiers it detects, so check the selected mode with
+`gbrain search modes` instead of assuming a fixed default.
 
 ## Quick decision
 
@@ -17,9 +23,10 @@ uses "mode" in two different ways:
 | Keep the brain healthy over time | `gbrain dream` or `gbrain autopilot --install` | Runs maintenance, extraction, consolidation, and enrichment work instead of answering one question. |
 | Let the brain volunteer context during an agent session | retrieval reflex, `volunteer_context`, `gbrain volunteer-context`, or `gbrain watch` | Pushes confidence-gated page pointers from recent conversation turns, so agents do not need to guess when to ask. |
 
-Do not invent a separate `chat` command in docs or agent protocols. The current
-public answer command is `gbrain think`; raw retrieval is `gbrain search` or
-the lower-level `gbrain query` operation when you need its extra controls.
+The normal human path has two commands: use `gbrain search` for evidence and
+`gbrain think` for a written answer. There is no separate `chat` command.
+`gbrain query` is an advanced retrieval interface for image search, expansion
+controls, evaluation, and debugging.
 
 ## Retrieval: `gbrain search`
 
@@ -57,10 +64,9 @@ Safety and cost notes:
 - Search returns evidence snippets. Fetch the full page when the surrounding
   context matters.
 
-Use the lower-level `gbrain query` operation only when you need controls that
-`search` intentionally hides: image query, expansion/detail knobs, adaptive
-return overrides, autocut overrides, relational retrieval debugging, or
-advanced eval/replay work.
+Use the lower-level `gbrain query` operation only when you need a control that
+`search` intentionally hides. For example, image-similarity retrieval uses
+`query --image`; ordinary text lookup should stay on `search`.
 
 ## Synthesis: `gbrain think`
 
@@ -105,7 +111,7 @@ Maintenance can submit protected work such as synthesis, patterns, and
 consolidation. Those paths are for trusted local operation and controlled
 automation, not arbitrary remote agent escalation.
 
-## Push context
+## Advanced: push context
 
 Push context is for agent sessions where the brain should volunteer relevant
 pages before the agent explicitly searches. It is zero-LLM and confidence-gated:
@@ -141,9 +147,9 @@ behavior, graph signals, and contextual retrieval defaults.
 
 | Mode | Use when | Cost/quality shape |
 |---|---|---|
-| `conservative` | Haiku-class subagents, high-volume loops, cost-sensitive automation. | 4K token budget, 10-result shape, no LLM expansion, lowest spend. |
-| `balanced` | Most Sonnet-tier users and shared brains. | 12K token budget, 25-result shape, strong defaults without expansion. |
-| `tokenmax` | Frontier-model workflows where recall matters more than spend. | No token cap, 50-result shape, LLM expansion on. Highest recall and highest spend. |
+| `conservative` | Frequent lightweight calls or strict cost limits. | 4K token budget, 10 results, no expansion, reranker, graph signals, or relational recall. |
+| `balanced` | Most personal and shared brains. | 12K token budget, 25 results, reranking, graph signals, title context, autocut, and relational recall. No expansion. |
+| `tokenmax` | Missing relevant material costs more than extra latency or spend. | No token cap, 50 results, expansion, reranking, graph signals, per-chunk context, autocut, and relational recall. |
 
 Inspect and change the active mode:
 
@@ -154,6 +160,8 @@ gbrain config set search.mode balanced
 
 Agents must not silently accept the install default. Follow the stop-and-ask
 protocol in `INSTALL_FOR_AGENTS.md` and show the cost matrix before continuing.
+Humans can inspect that same live matrix during `gbrain init` or with
+`gbrain search modes`; fixed examples in prose should not replace it.
 
 ## Production choices
 

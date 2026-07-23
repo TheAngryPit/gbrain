@@ -26,7 +26,7 @@ Classify the user's operating model before choosing a deployment topology. Use
 [`docs/architecture/topologies.md#operating-model-decision-tree`](docs/architecture/topologies.md#operating-model-decision-tree)
 and
 [`docs/architecture/topologies.md#deployment-topology-decision-tree`](docs/architecture/topologies.md#deployment-topology-decision-tree)
-when the setup is not the simple local default.
+when the setup is not one local brain on one machine.
 
 | User situation | Agent path | Extra gate |
 |---|---|---|
@@ -76,14 +76,14 @@ protocol (install, read order, trust boundary, common tasks). Claude Code reads
 `CLAUDE.md` automatically and can skip ahead.
 
 If you fetched this file by URL without cloning yet, the companion files live at:
-- `https://raw.githubusercontent.com/garrytan/gbrain/master/AGENTS.md` — start here
-- `https://raw.githubusercontent.com/garrytan/gbrain/master/llms.txt` — generated doc map
-- `https://raw.githubusercontent.com/garrytan/gbrain/master/llms-full.txt` — generated inlined doc bundle
-- `https://raw.githubusercontent.com/garrytan/gbrain/master/docs/INSTALL.md` — human install and operating center
+- `https://raw.githubusercontent.com/garrytan/gbrain/master/AGENTS.md`: start here
+- `https://raw.githubusercontent.com/garrytan/gbrain/master/llms.txt`: generated doc map
+- `https://raw.githubusercontent.com/garrytan/gbrain/master/llms-full.txt`: generated inlined doc bundle
+- `https://raw.githubusercontent.com/garrytan/gbrain/master/docs/INSTALL.md`: human install and operating center
 
 ## Step 1: Install GBrain
 
-Default path (Bun is required — gbrain is a Bun + TypeScript runtime):
+Default path. GBrain requires the Bun TypeScript runtime:
 
 ```bash
 curl -fsSL https://bun.sh/install | bash
@@ -107,15 +107,25 @@ restart the shell or add the PATH export to the shell profile.
 
 ## Step 2: API Keys
 
-Ask the user for these. GBrain defaults to the ZeroEntropy embedding + reranker
-stack. OpenAI and Voyage are supported fallbacks via
-`gbrain config set embedding_model <provider:model>`.
+Ask the user whether they want semantic retrieval now or a keyword-only first
+test. GBrain can use ZeroEntropy, OpenAI,
+Voyage, local servers, and other providers documented in
+`docs/integrations/embedding-providers.md`. Select the embedding model during
+`gbrain init` with `--embedding-model` and `--embedding-dimensions`. For an
+existing PGLite brain, use `gbrain reinit-pglite`; for Postgres, use
+`docs/embedding-migrations.md`. Never try to switch an existing schema with
+`gbrain config set embedding_model`.
 
 ```bash
-export ZEROENTROPY_API_KEY=ze-...     # default embedding + reranker (v0.36.2.0+)
-export OPENAI_API_KEY=sk-...          # fallback for vector search; also used for chat models
-export ANTHROPIC_API_KEY=sk-ant-...   # optional, improves search quality via query expansion
+export ZEROENTROPY_API_KEY=your_zeroentropy_api_key_here
+export OPENAI_API_KEY=your_openai_api_key_here
+export ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ```
+
+If the user chooses a keyword-only first test, initialize with
+`gbrain init --pglite --no-embedding`. Do not run plain non-interactive
+`gbrain init` with no configured provider: it exits with a setup hint rather
+than silently creating a provider-backed brain.
 
 Save keys to the user's shell profile or the GBrain config file plane. Do not
 paste secrets into shared agent config, chat transcripts, Git commits, or issue
@@ -137,8 +147,22 @@ Provider and base URL rules:
 ## Step 3: Create the Brain
 
 ```bash
-gbrain init                           # PGLite, no server needed
-gbrain doctor --json                  # verify all checks pass
+gbrain init --pglite --no-embedding  # deterministic keyword-only path
+gbrain doctor --json                  # verify engine and schema state
+```
+
+On this path, `doctor` should report an initialized engine and non-zero schema
+version while identifying embeddings as intentionally unconfigured. Do not
+misreport that expected limitation as a fully provider-ready brain.
+
+For the provider-backed path, export the selected key first and pass the model
+and dimensions explicitly, or let an interactive TTY choose among env-ready
+providers:
+
+```bash
+gbrain init --pglite \
+  --embedding-model your_provider:your_model \
+  --embedding-dimensions 1234
 ```
 
 The user's markdown files (notes, docs, brain repo) are SEPARATE from this tool repo.
@@ -185,17 +209,23 @@ Per-query cost @ 10K queries/mo (typical single-user volume):
 >   1) conservative — tight 4K budget, no LLM expansion, 10 chunks max.
 >      Best for Haiku subagents, cost-sensitive setups, high-volume loops.
 >
->   2) balanced — 12K budget, no expansion, 25 chunks. Sonnet-tier sweet spot.
+>   2) balanced: 12K budget, no expansion, 25 chunks, reranking, graph
+>      signals, title context, autocut, and relational recall. Moderate
+>      general-purpose choice.
 >
->   3) tokenmax (recommended default — preserves v0.31.x retrieval shape) —
->      no budget, LLM expansion ON, 50 chunks. Best for Opus/frontier models.
+>   3) tokenmax (normally recommended; preserves v0.31.x retrieval shape):
+>      no budget, LLM expansion ON, 50 chunks, reranking, graph signals,
+>      per-chunk context, autocut, and relational recall. Best when recall
+>      matters more than latency or downstream token cost.
 >
 > Cost depends on BOTH the mode AND the downstream model you run. See the
 > matrix above for the 9-cell breakdown.
 
-If the operator picks a non-default mode, run:
+If the operator picks a non-default mode, run the command with that exact
+choice. For example:
+
 ```bash
-gbrain config set search.mode <mode>
+gbrain config set search.mode balanced
 ```
 
 If they pick tokenmax AND want to preserve the literal v0.31.x default
@@ -218,10 +248,26 @@ reflex, `volunteer_context`, `gbrain volunteer-context`, or `gbrain watch`.
 
 ## Step 4: Import and Index
 
+If the user chose the keyword-only path, import without embeddings and verify a
+phrase that exists in the Markdown:
+
 ```bash
-gbrain import ~/brain/ --no-embed     # import markdown files
-gbrain embed --stale                  # generate vector embeddings
-gbrain query "key themes across these documents?"
+gbrain import ~/brain/ --no-embed
+gbrain search "known phrase from the brain"
+```
+
+Report that exact-word search works and that semantic search, reranking,
+`think`, and maintenance remain unavailable until the user configures an
+embedding provider.
+
+If the user chose the provider-backed path, import, embed, and verify both
+retrieval and synthesis:
+
+```bash
+gbrain import ~/brain/
+gbrain embed --stale
+gbrain search "known concept from the brain"
+gbrain think "What are the key themes across these documents?"
 ```
 
 ## Step 4.5: Wire the Knowledge Graph

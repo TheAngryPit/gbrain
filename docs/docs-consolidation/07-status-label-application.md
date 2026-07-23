@@ -1,4 +1,4 @@
-# Status Label Application
+# Status label application
 
 Status: tracking artifact for docs consolidation issue #12
 
@@ -15,7 +15,7 @@ are reachable from current references and generated maps.
 It deliberately did not label every current guide, tutorial, skill file, recipe,
 fixture, or generated map.
 
-## Applied Labels
+## Applied labels
 
 | File | Label | Current route |
 |---|---|---|
@@ -35,7 +35,7 @@ fixture, or generated map.
 | `docs/incidents/2026-05-20-lsd-cost-explosion.md` | `HISTORICAL` | `CHANGELOG.md`, `docs/GBRAIN_VERIFY.md`, `docs/INSTALL.md` |
 | `docs/plans/2026-06-03-001-feat-idea-lineage-skill-plan.md` | `HISTORICAL` | `skills/idea-lineage/SKILL.md`, `skills/RESOLVER.md` |
 
-## Non-Goals
+## Non-goals
 
 - No status banners were added to current operational docs such as `README.md`,
   `docs/INSTALL.md`, `INSTALL_FOR_AGENTS.md`, `docs/mcp/DEPLOY.md`, or
@@ -43,7 +43,7 @@ fixture, or generated map.
 - No test fixtures, generated maps, or bundled skill bodies were relabelled.
 - No historical content was deleted.
 
-## Proof Map
+## Proof map
 
 | Claim | Proof level | Evidence |
 |---|---|---|

@@ -138,7 +138,7 @@ advertise brain-aware dispatch:
 gbrain mounts add media-team \
   --path ~/team-brains/media \
   --engine postgres \
-  --db-url postgresql://...
+  --db-url postgresql://user:password@host:5432/database
 gbrain mounts list
 ```
 
@@ -256,9 +256,9 @@ know the other.
 
 ## Further reading
 
-- `CHANGELOG.md` — release history for `sources`, `mounts`, and topology-facing
+- `CHANGELOG.md`: release history for `sources`, `mounts`, and topology-facing
   behavior.
-- `docs/architecture/topologies.md` — operating-model and deployment-topology
+- `docs/architecture/topologies.md`: operating-model and deployment-topology
   choices.
-- `docs/architecture/thin-client.md` — remote-MCP/thin-client deployment
+- `docs/architecture/thin-client.md`: remote-MCP/thin-client deployment
   boundary.

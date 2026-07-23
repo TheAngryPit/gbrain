@@ -23,46 +23,38 @@ alongside OpenAI and Voyage.
    export ZEROENTROPY_API_KEY=<your-key>
    ```
 
-## Embedding switch — zembed-1
+## Use zembed-1 for embeddings
 
-**Important:** `gbrain config set embedding_model …` is NOT a live
-gateway switch. `embedding_model` and `embedding_dimensions` size the
-schema and must be stable across engine connects, so they only resolve
-from the **file plane** (`~/.gbrain/config.json`) and the **env plane**
-(`GBRAIN_EMBEDDING_MODEL` / `GBRAIN_EMBEDDING_DIMENSIONS`). The DB plane
-is intentionally ignored for these two keys (same posture as today's
-Voyage setup).
+`embedding_model` and `embedding_dimensions` size the database schema. Choose
+them during initialization:
 
-### Option A — file plane (recommended for stable installs)
-
-Edit `~/.gbrain/config.json`:
-
-```json
-{
-  "embedding_model": "zeroentropyai:zembed-1",
-  "embedding_dimensions": 2560
-}
+```bash
+gbrain init --pglite \
+  --embedding-model zeroentropyai:zembed-1 \
+  --embedding-dimensions 2560
 ```
 
 Valid dims: `2560` (default), `1280`, `640`, `320`, `160`, `80`, `40`.
-Matryoshka-style — smaller trades quality for storage monotonically.
+With Matryoshka embeddings, smaller dimensions trade retrieval quality for
+storage.
 Pick the largest that fits your column width.
 
-### Option B — env plane (CI / Docker)
+### Change an existing brain
+
+For PGLite, use the schema-aware reinitialization command:
 
 ```bash
-export GBRAIN_EMBEDDING_MODEL=zeroentropyai:zembed-1
-export GBRAIN_EMBEDDING_DIMENSIONS=2560
+gbrain reinit-pglite \
+  --embedding-model zeroentropyai:zembed-1 \
+  --embedding-dimensions 2560
 ```
 
-### Re-embed
+The previous database is preserved at `<path>.bak`, and the configured brain
+repo is synced again. For Postgres, follow
+[`../embedding-migrations.md`](../embedding-migrations.md).
 
-Switching embedding models invalidates the vector index. Re-embed:
-
-```bash
-gbrain embed --stale --limit 50    # smoke a small batch
-gbrain embed --stale               # full re-embed
-```
+Do not edit only `embedding_model` or `embedding_dimensions`. A config-only
+change cannot resize the vector column and is refused by `gbrain config set`.
 
 ### Verify
 
@@ -70,9 +62,9 @@ gbrain embed --stale               # full re-embed
 gbrain models doctor --json | jq '.probes[] | select(.touchpoint=="embedding_config")'
 ```
 
-Expected: `status: "ok"`. Invalid dims (e.g. `1024`, `1536`, `3072`)
-surface as `status: "config"` with a paste-ready
-`gbrain config set embedding_dimensions <one of 2560|1280|640|320|160|80|40>` fix hint.
+Expected: `status: "ok"`. If the configured size and database column disagree,
+repair PGLite with `gbrain reinit-pglite` or use the Postgres embedding
+migration guide.
 
 ## Reranker switch — zerank-2
 
@@ -80,15 +72,14 @@ The reranker is the bigger story: gbrain had no cross-encoder reranker
 stage before v0.35.0.0. It slots between RRF dedup and token-budget
 enforcement in hybrid search.
 
-### Default-on with `tokenmax` mode
+### Default-on with `balanced` and `tokenmax`
 
-`tokenmax` mode now defaults `search.reranker.enabled = true` with
-`zerank-2`. If you already use `tokenmax` AND have `ZEROENTROPY_API_KEY`
-set, reranker fires automatically. Without the key, every rerank call
-fails-open (audit-logged) and search returns RRF order — same UX as
-before, just with an observable failure surfaced via `gbrain doctor`.
+`balanced` and `tokenmax` default `search.reranker.enabled = true` with
+`zerank-2`. With `ZEROENTROPY_API_KEY` set, reranking runs automatically.
+Without the key, reranking fails open, records the failure, and returns the
+pre-rerank order.
 
-### Opt-in on `conservative` or `balanced` mode
+### Opt in on `conservative`
 
 ```bash
 gbrain config set search.reranker.enabled true
@@ -98,9 +89,9 @@ The override sits above the mode-bundle default; opt-out is one flip.
 
 ### Cost anchor
 
-At 30 candidates × ~400 tokens/chunk × $0.025/1M = **~$0.0003/query**.
-Rounding error against the `tokenmax + Opus` pairing's ~$700/mo at
-single-user volume per the CLAUDE.md cost matrix.
+Cost scales with the number and length of candidates sent to the reranker.
+Check current provider pricing and `gbrain search modes` instead of relying on
+a fixed monthly estimate.
 
 ### Verify
 
@@ -118,9 +109,9 @@ Two probes run for reranker:
 
 | Config key | Default | Notes |
 |---|---|---|
-| `search.reranker.enabled` | `true` for tokenmax, `false` for others | One-flip opt-in/out |
+| `search.reranker.enabled` | `true` for balanced and tokenmax; `false` for conservative | One-flip opt-in/out |
 | `search.reranker.model` | `zeroentropyai:zerank-2` | Try `zerank-1` (older SOTA) or `zerank-1-small` (Apache-2.0 open) |
-| `search.reranker.top_n_in` | `30` | Candidates sent to reranker (caps API spend) |
+| `search.reranker.top_n_in` | `25` in balanced; `50` in tokenmax | Candidates sent to reranker |
 | `search.reranker.top_n_out` | `null` (no truncate) | Truncate reranked output to this many; `null` preserves full length |
 | `search.reranker.timeout_ms` | `5000` | HTTP timeout; long stalls degrade UX worse than RRF fallback |
 

@@ -99,7 +99,7 @@ This isn't possible without typed page kinds. You can write the same prose in an
 
 `gbrain mounts add` lets you stack additional brains alongside your personal one. Each mounted brain has its OWN schema pack. The eng team's brain has `incident`, `runbook`, `service`, `oncall-rotation`. The design team's brain has `component`, `experiment`, `ab-test`, `figma-link`. The legal team's brain has cases and depositions.
 
-When an agent or integration deliberately routes a query to the mounted eng brain, that brain's schema pack governs how its content is interpreted. The eng brain knows that `incidents/2026-05-23-db-outage.md` is an `incident` page with `severity=p0`, `mttr=47min`, `on_call=alice-example` — extractable typed facts. Current generic CLI query dispatch does not document `gbrain query --brain <id>` as a supported path, so cross-brain querying should be treated as an agent/integration routing responsibility until that command layer is wired.
+When an agent or integration deliberately routes a query to the mounted eng brain, that brain's schema pack governs how it interprets the content. The eng brain treats `incidents/2026-05-23-db-outage.md` as an `incident` page with typed `severity=p0`, `mttr=47min`, and `on_call=alice-example` facts. Current generic CLI query dispatch does not document `gbrain query --brain 123` as a supported path, so the agent or integration must route cross-brain queries until the command layer supports them.
 
 The schema is the team's tribal knowledge made explicit. Two engineers on different teams searching the same brain get DIFFERENT routing because their personal packs declare different expert types.
 

@@ -211,7 +211,7 @@ Publication to the public registries (`garrytan/gbrain-schema-registry`,
 `garrytan/gbrain-skillpack-registry`) follows the same publish-as-PR
 workflow as v0.37 skillpack publishing.
 
-## Current and Deferred Boundaries
+## Current and deferred boundaries
 
 - **Divergent per-source pack reads still fail closed.**
   When a federated read resolves to multiple active pack names, the operation

@@ -1,18 +1,21 @@
-# Docs Consolidation PR Proposal
+# Docs consolidation PR proposal
 
-Status: prepared PR handoff. Do not open or mark a PR ready without explicit
-operator approval.
+Status: fresh PR handoff in progress. The previous PR was closed because local
+analysis caches made its diff unreviewable. This proposal excludes those files.
 
-## Proposed Title
+## Proposed title
 
-Docs: consolidate GBrain operational entrypoints and current-state guidance
+v0.42.64.0 docs: consolidate install and operating paths (#2211)
 
-## Proposed Body
+## Proposed body
 
 ### Summary
 
 This is a docs-only consolidation pass for GBrain operational documentation. It
 does not change runtime behavior.
+
+This is a clean replacement for #2212. It excludes `.codegraph/`,
+`.understand-anything/`, and other local analysis state.
 
 The branch:
 
@@ -20,10 +23,15 @@ The branch:
 - refreshes the documentation inventory and status taxonomy;
 - makes README a router with current version, human install, agent install,
   production, architecture, and LLM entrypoints;
-- rebuilds `docs/INSTALL.md` as the Human Operational Center;
+- rebuilds `docs/INSTALL.md` as the canonical human install and operating
+  guide;
 - adds route-based install journeys for local personal, personal multi-source,
   thin-client, shared/production, and advanced topology setups;
-- updates `INSTALL_FOR_AGENTS.md` as the Agent Operational Center;
+- gives the local human route a complete first result: install, initialize,
+  create a sample note, import it, search it, and verify the output;
+- separates provider-backed initialization from the supported keyword-only
+  `--no-embedding` path and its later `reinit-pglite` transition;
+- updates `INSTALL_FOR_AGENTS.md` as the canonical agent protocol;
 - separates operating models from deployment topologies;
 - adds a central Brain Repo Layout guide;
 - adds a Mode Selection Guide for `search`, `think`, `dream`/autopilot, and
@@ -31,6 +39,8 @@ The branch:
 - adds a production/shared-brain path and checklist;
 - aligns MCP/auth/remote/thin-client docs with current OAuth/scopes/localOnly
   behavior;
+- corrects DCR documentation to the consent-bearing default and removes a
+  brittle count of `localOnly` operations;
 - corrects OAuth scope examples to the current space-separated CLI contract and
   documents the protected-onboard OAuth limitation without promising an
   ungrantable scope;
@@ -43,11 +53,12 @@ The branch:
   management commands;
 - labels selected historical/design/superseded docs;
 - removes or qualifies brittle skill/test/generated-map count claims;
-- regenerates `llms.txt` and `llms-full.txt` where their source changed;
+- adds the human install guide directly to the machine-readable documentation
+  index and regenerates `llms.txt` and `llms-full.txt`;
 - adds a final consistency report mapping PRD acceptance, changelog-current
   capabilities, operator feedback, and issues #2 through #14.
 
-### Key Artifacts
+### Key artifacts
 
 - `docs/docs-consolidation/05-current-capabilities-ledger.md`
 - `docs/docs-consolidation/06-documentation-status-taxonomy.md`
@@ -65,38 +76,27 @@ The branch:
 
 ### Validation
 
-- `bun run build:llms` passed after generated-map source changes.
-- `git diff --check` and staged whitespace checks passed on implementation
-  slices.
-- Targeted stale-count searches passed for the #13 phrases.
-- Staged-diff secret-pattern scans returned no hits.
-- GitHub issues #1 through #14 were used as tracker/acceptance context.
-- Final report confirms no `src/`, test, migration, package, lockfile, Docker
-  compose, or runtime config changes.
-- `bun test test/build-llms.test.ts` passed after materializing locked
-  dependencies locally with `bun install --frozen-lockfile --ignore-scripts`.
-- Follow-up review used `openclaw-autoreview`, the Thermos review pattern,
-  CodeGraph, and the existing `understand-anything` graph. Accepted findings
-  were patched in README, `docs/INSTALL.md`, topology docs, agent docs, and
-  consolidation artifacts, including follow-up OAuth issuer/public URL fixes
-  and remote-MCP versus trusted-host shell-job corrections.
-- The existing `understand-anything` graph is architecture context from commit
-  `416f2ae29788a16cba1b20fb33ccf05a4eb665c1`; current CLI/auth claims were
-  verified with CodeGraph against on-disk source.
+- `bun run build:llms`
+- focused `bun test test/build-llms.test.ts` with unrelated suite preloads
+  disabled
+- `git diff --check`
+- current source-contract review through CodeGraph
+- fresh upstream check confirming version `0.42.64.0`
+- fresh repository-wide `understand-anything` scan: 2,676 files, 12,212 nodes,
+  19,114 edges, 9 layers, 6 tour steps, and 0 validation issues
+- final `openclaw-autoreview` result will be copied from
+  `docs/docs-consolidation/09-final-consistency-report.md` after it runs
 
-### Proof Limits
+### Proof limits
 
 - Static documentation/source inspection only.
 - No GBrain runtime command was run.
 - No local GBrain brain home, corpus path, runtime config, Hermes/OpenClaw,
   Hindsight, or Nexus runtime was inspected.
 - No service, Docker lifecycle, migration, import, sync, or dependency install
-  beyond local dependency materialization was run.
-- One local dependency materialization was run with `bun install
-  --frozen-lockfile --ignore-scripts`; it changed no tracked files and did not
-  run lifecycle scripts.
+  was run.
 
-## Review Checklist
+## Review checklist
 
 - [ ] README routes readers without duplicating operational detail.
 - [ ] `docs/INSTALL.md` is acceptable as the Human Operational Center.
@@ -110,6 +110,5 @@ The branch:
 - [ ] Historical/design/superseded labels are useful without over-labeling.
 - [ ] `llms.txt` and `llms-full.txt` generated-map guidance is acceptable for
       upstream and fork users.
-- [ ] The `.gitignore` local-analysis entries for `.codegraph/` and
-      `.understand-anything/` are acceptable in a docs-focused PR, or should be
-      moved to local excludes before opening the PR.
+- [ ] The final diff contains no `.codegraph/`, `.understand-anything/`, or
+      local-analysis ignore entries.

@@ -1,4 +1,4 @@
-# Current Capabilities Ledger
+# Current capabilities ledger
 
 Status: changelog-derived baseline for docs consolidation issues #2-#14
 
@@ -8,17 +8,17 @@ migration, import, sync, or Docker lifecycle command was run.
 
 Baseline:
 
-- Current upstream commit: `090bb53203557f5659563ea28c1c847c32167aeb`
-- Current upstream version: `0.42.44.0`
-- Primary release window: `0.42.44.0` through `0.42.41.0`
-- Supporting release window for drift classification: `0.42.40.0` through
+- Current upstream commit: `1a449bf5015e8ff33af966d9f108a0b0e81a6da9`
+- Current upstream version: `0.42.64.0`
+- Primary release window: `0.42.64.0` through `0.42.55.0`
+- Supporting release window for drift classification: `0.42.54.0` through
   `0.42.20.0`
 
-## How To Use This Ledger
+## How to use this ledger
 
 For the rest of this docs-only PR, treat `CHANGELOG.md` as the release
-evolution ledger. A doc is not automatically stale just because a later release
-exists. Classify it against the current capability it claims to document:
+evolution ledger. A later release does not automatically make a doc stale.
+Classify it against the current capability it claims to document:
 
 - `current`: accurately represents the current capability for its intended
   scope.
@@ -33,10 +33,21 @@ exists. Classify it against the current capability it claims to document:
 `docs/docs-consolidation/*` is analysis output, not upstream documentation
 input. Do not count this ledger as proof that the public docs are fixed.
 
-## Capability Matrix
+## Capability matrix
 
 | Release | Current capability or design semantic | Documentation obligation | Current docs status | Follow-up |
 |---|---|---|---|---|
+| `0.42.64.0` | Confidential OAuth clients can revoke tokens with client authentication; malformed, invalid, and mixed credentials fail closed. | MCP and shared-brain docs must teach revocation as part of the client lifecycle without weakening authentication. | `current` after this pass in `docs/INSTALL.md` and the MCP authority docs. | Final review |
+| `0.42.63.0` | Schema commands use the configured custom PGLite database path. | Troubleshooting must not assume every PGLite brain lives at the default path. | `current` after this pass in `docs/INSTALL.md`. | Final review |
+| `0.42.62.0` | Multi-source identity is preserved across links, timelines, webhooks, background writes, renames, and nested source trees. Existing multi-source brains need one `gbrain extract all` after upgrade. | Install, upgrade, and multi-source docs must include the one-time extraction step and source-scoped proof. | `current` after this pass in `docs/INSTALL.md`; linked multi-source docs require consistency review. | Final review |
+| `0.42.62.0` | OAuth clients can bind agent tools, source, brain, slug prefixes, concurrency, and daily budget. | Shared-brain docs must distinguish ordinary OAuth scopes from narrower agent execution constraints. | `current` after this pass in `docs/INSTALL.md`. | Final review |
+| `0.42.61.0` | Autopilot recovers locks using live process state; schema packs and takes bootstrap expose more deterministic progress and scope. | Operations docs should prefer observable recovery over manual lock breaking. | `current` after this pass in the central install path. | Final review |
+| `0.42.60.0` | Sync and provider behavior are safer across Windows, non-Anthropic gateways, source isolation, and non-interactive output. | Cross-platform and headless docs must use explicit provider and secret flows. | `incomplete-current`: the headless provider path was corrected in this pass; broader platform pages remain linked detail. | Final review |
+| `0.42.59.0` | Migration recovery and multi-source migration no longer rely on old single-source assumptions; `think` respects source scope. | Upgrade and mode docs must not describe source scope as retrieval-only. | `current` in central routing docs after this pass. | Final review |
+| `0.42.58.0` | LiteLLM, llama-server, Ollama, local providers, custom base URLs, and custom embedding dimensions have current supported paths. | Provider docs must require explicit dimensions where GBrain cannot infer them. | `current` after correcting `docs/INSTALL.md`, headless install, and ZeroEntropy guidance. | Final review |
+| `0.42.57.0` | PGLite has lock-corruption prevention and a canonical `gbrain reinit-pglite` recovery path. | Docs must not recommend manual lock deletion or config-only embedding changes. | `current` after this pass in human, agent, provider, and headless install docs. | Final review |
+| `0.42.56.0` | Life Chronicle is current and migrations `v121` and `v122` ship with it; automatic emission remains opt-in. | Upgrade docs must treat shipped Chronicle behavior as present, not future work. | `current` in the upgrade summary; detailed Chronicle docs remain the feature authority. | Final review |
+| `0.42.55.0` | DCR defaults to consent-bearing `authorization_code`; `--enable-dcr-insecure` separately permits `client_credentials`. Migration `v120` and routing/security hardening also shipped. | Remote install docs must distinguish both DCR flags and avoid presenting consent-bypassing registration as the default. | `current` after this pass in `docs/INSTALL.md`; MCP pages require final cross-check. | Final review |
 | `0.42.44.0` | Tutorials are part of the live operational surface; the personal-brain AlphaClaw link was fixed because a stale deploy link broke the path. | Treat tutorials as live install/deploy docs, not archive examples. | `current` for the specific link fix; broader tutorial routing still needs the final consistency pass. | #14 |
 | `0.42.43.0` | Push-based context is current: `volunteer_context`, `gbrain volunteer-context`, `gbrain watch`, rolling-window retrieval reflex, volunteered-vs-used stats, deterministic rationales, slug-only suppression under windows, privacy-stripped synopses. | Public and agent docs must explain when the brain volunteers context, when an agent should call the op, and when watch is appropriate. | `current`: `docs/guides/push-context.md`, `CLAUDE.md` reference map, `docs/TESTING.md`, `docs/architecture/KEY_FILES.md`. `incomplete-current`: `README.md`, `docs/INSTALL.md`, `INSTALL_FOR_AGENTS.md`, and `docs/guides/search-modes.md` do not route readers to push-context in the operational flow. | #4, #5, #6, #9 |
 | `0.42.43.0` | Transaction-pooler teardown coverage is part of local CI; `doctor` exit-verdict sweep was completed; raw exit-code writes are structurally guarded. | Testing/release docs should describe the current CI gate without brittle counts; operational docs should not imply the old force-exit banner is normal. | `current`: `AGENTS.md`, `docs/TESTING.md`, `docs/architecture/KEY_FILES.md`. `incomplete-current`: production troubleshooting has no central path yet. | #10, #13, #14 |
@@ -61,10 +72,10 @@ input. Do not count this ledger as proof that the public docs are fixed.
 | `0.42.25.0` | Chat model pricing has one canonical table; cost caps cover Opus 4.8 and provider-prefixed ids. | Mode/production docs should frame cost controls as current guardrails, not loose estimates. | `current`: `CLAUDE.md` invariant. `missing`: mode/production decision surface. | #9, #10 |
 | `0.42.24.0` | Minion lock hot path routes to direct session pool on Supabase; PGLite is a no-op path. | Production worker docs should treat direct pool configuration as operationally important. | `current`: personal-brain/live-sync docs for direct URL; `missing`: central production path. | #10 |
 | `0.42.23.0` | Worker/supervisor support `--nice`; effective niceness is observable in stats/doctor. | Production operations should include priority/concurrency distinction. | `incomplete-current`: minions docs exist, but not central checklist. | #10 |
-| `0.42.22.0` | Wedged queues are detected by worker self-probe and supervisor forward-progress watchdog; doctor surfaces `wedged_queue`. | Production troubleshooting should teach forward-progress health, not just process liveness. | `current`: queue/minions references. `missing`: production failure-mode checklist. | #10 |
+| `0.42.22.0` | Wedged queues are detected by worker self-probe and supervisor forward-progress watchdog; doctor surfaces `wedged_queue`. | Production troubleshooting should teach forward progress alongside process liveness. | `current`: queue/minions references. `missing`: production failure-mode checklist. | #10 |
 | `0.42.21.0` / `0.42.20.0` | Dream/background work, reconnect, and background drain fixes make command/cycle cleanup more reliable. | Maintenance-mode docs should reflect current behavior and avoid historical "connect() has not been called" framing except as historical troubleshooting. | `current`: changelog and KEY_FILES. `missing`: mode-selection and production guide. | #9, #10 |
 
-## Documentation Classification Snapshot
+## Documentation classification snapshot
 
 ### Current
 
@@ -143,11 +154,11 @@ input. Do not count this ledger as proof that the public docs are fixed.
 - Production operational path and checklist.
 - Status-label convention for historical/design/deprecated/superseded docs.
 
-## Proof Map
+## Proof map
 
 | Claim | Proof level | Evidence |
 |---|---|---|
-| Current version is `0.42.44.0` | `code_proven` | `VERSION`, top of `CHANGELOG.md`, `docs/docs-consolidation/00-upstream-base.md` |
+| Current version is `0.42.64.0` | `code_proven` | `VERSION`, top of `CHANGELOG.md`, `docs/docs-consolidation/00-upstream-base.md` |
 | Push-context docs exist and are current for v0.42.43.0 surfaces | `code_proven` | `CHANGELOG.md`, `docs/guides/push-context.md`, `CLAUDE.md`, `docs/TESTING.md`, `docs/architecture/KEY_FILES.md` |
 | Teardown/exit-verdict behavior is documented in maintainer proof surfaces | `code_proven` | `CHANGELOG.md`, `docs/TESTING.md`, `docs/architecture/KEY_FILES.md` |
 | Relational retrieval is current in architecture docs but missing from the old search-mode skill guide | `code_proven` | `CHANGELOG.md`, `README.md`, `docs/architecture/RETRIEVAL.md`, `docs/guides/search-modes.md` |
@@ -155,12 +166,12 @@ input. Do not count this ledger as proof that the public docs are fixed.
 | Skill/test count claims drift across docs | `code_proven` | `README.md`, `docs/INSTALL.md`, `CLAUDE.md`, `AGENTS.md`, `docs/RELEASING.md`, `scripts/llms-config.ts`, `llms.txt`, prior inventory counts |
 | No runtime proof was attempted | `implemented` | This pass used static reads, CodeGraph, GitHub issue reads, and text searches only |
 
-## Strongest Safe Truth
+## Strongest safe truth
 
 The first docs consolidation move should not delete large blocks of older docs.
 The safer current baseline is a mixed strategy:
 
-- Update docs that are accurate but incomplete for v0.42.44.0.
+- Update docs that are accurate but incomplete for v0.42.64.0.
 - Mark historical/design docs when their trust level is ambiguous.
 - Route users through one human path and one agent path.
 - Fix direct contradictions where current docs conflict with current source or

@@ -9,8 +9,6 @@ bin/
 # file in cwd; glob catches all of them.
 *.bun-build
 .gstack/
-.codegraph/
-.understand-anything/
 supabase/.temp/
 .claude/skills/
 # admin/dist/ is the React SPA bundle. CLAUDE.md says it's committed for

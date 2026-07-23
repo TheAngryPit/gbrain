@@ -34,32 +34,40 @@ Init writes `~/.gbrain/config.json` with the resolved `embedding_model` + `embed
 
 ## Pattern 2: Provider key only at runtime (deferred-setup)
 
-If the API key is a runtime secret (Kubernetes secret, runtime env injection, end-user-supplied), use `--no-embedding` at build time and configure the provider when the container actually runs:
+If the API key is a runtime secret, use `--no-embedding` at build time and
+recreate the empty PGLite database with the real model and dimensions when the
+container starts:
 
 ```dockerfile
 FROM oven/bun:1
 RUN bun install -g github:garrytan/gbrain
 
-# Build the brain shape without a provider — schema lands at the default
+# Build the brain shape without a provider. The schema lands at the default
 # width, but no embed callsite will actually run until runtime config.
 RUN gbrain init --pglite --no-embedding
 
-# At container start (entrypoint), provide the real provider:
+# At container start, provide the real provider and rebuild the empty schema:
 ENTRYPOINT ["/bin/sh", "-c", "\
-  gbrain config set embedding_model openai:text-embedding-3-large \
-  && gbrain init --force --pglite \
+  gbrain reinit-pglite \
+    --embedding-model openai:text-embedding-3-large \
+    --embedding-dimensions 1536 \
+    --yes --no-sync \
   && exec gbrain serve"]
 ```
 
-The `gbrain init --no-embedding` opt-in writes `embedding_disabled: true` to config. Every embed callsite (`gbrain import`, `gbrain embed`, the `runEmbedCore` library entry point) checks this and refuses cleanly with a `gbrain config set embedding_model <id>` hint rather than proceeding with a silent default.
+The `gbrain init --no-embedding` opt-in writes `embedding_disabled: true` to
+config. Embed callsites refuse to run instead of choosing a silent default.
 
-The runtime `gbrain init --force` re-runs the init flow against the now-populated env, which:
+The runtime `gbrain reinit-pglite` command:
 
-- Removes `embedding_disabled` from config.
-- Resolves the provider via env detection.
-- Re-templates the PGLite schema if dim differs from the build-time default.
+- Preserves the previous empty database as `<path>.bak`.
+- Rebuilds the schema at the requested vector size.
+- Persists the explicit embedding provider and dimensions.
 
-## What WON'T work
+Do not use this deferred pattern after importing content. Choose the provider
+before import, or follow the normal `reinit-pglite` backup and resync flow.
+
+## What will not work
 
 ```dockerfile
 # Don't do this — silent default leaves you with vector(1280) ZE column
@@ -67,7 +75,9 @@ The runtime `gbrain init --force` re-runs the init flow against the now-populate
 RUN gbrain init --pglite
 ```
 
-If you upgrade from a pre-v0.37 image that used this pattern, `gbrain doctor` will surface the mismatch on first run after upgrade and print a paste-ready repair command (`gbrain init --force --embedding-model …` for empty brains, `gbrain retrieval-upgrade --reindex` for non-empty).
+If you upgrade an older image that used this pattern, run `gbrain doctor` first.
+Repair PGLite with `gbrain reinit-pglite`; use
+[`../embedding-migrations.md`](../embedding-migrations.md) for Postgres.
 
 ## Verifying a headless install
 
